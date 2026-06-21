@@ -1,160 +1,94 @@
 "use client";
 
 import Link from "next/link";
-import { TwitterLogo, GithubLogo, DiscordLogo, TelegramLogo, LinkedinLogo, Envelope, ArrowRight } from "@phosphor-icons/react";
+import { Lightning } from "@phosphor-icons/react";
 
 const footerLinks = {
-  Product: [
-    { label: "Launchpad", href: "#features" },
-    { label: "Tokenomics", href: "#tokenomics" },
-    { label: "Roadmap", href: "#roadmap" },
-    { label: "Security", href: "/security" },
-    { label: "Audit Reports", href: "/audits" },
+  Platform: [
+    { href: "#features", label: "Features" },
+    { href: "#tokenomics", label: "Tokenomics" },
+    { href: "#roadmap", label: "Roadmap" },
+    { href: "/dashboard", label: "Dashboard" },
   ],
-  Developers: [
-    { label: "Documentation", href: "#faq" },
-    { label: "SDK & API", href: "/developers" },
-    { label: "GitHub", href: "https://github.com/ignite-launchpad", external: true },
-    { label: "Smart Contracts", href: "/contracts" },
-    { label: "Bug Bounty", href: "/bug-bounty" },
+  Resources: [
+    { href: "#", label: "Documentation" },
+    { href: "#", label: "Whitepaper" },
+    { href: "#", label: "Audits" },
+    { href: "#", label: "Bug Bounty" },
   ],
-  Company: [
-    { label: "About", href: "/about" },
-    { label: "Team", href: "#team" },
-    { label: "Careers", href: "/careers" },
-    { label: "Blog", href: "/blog" },
-    { label: "Press Kit", href: "/press" },
+  Community: [
+    { href: "#", label: "Discord" },
+    { href: "#", label: "Twitter" },
+    { href: "#", label: "Telegram" },
+    { href: "#", label: "Blog" },
   ],
   Legal: [
-    { label: "Terms of Service", href: "/terms" },
-    { label: "Privacy Policy", href: "/privacy" },
-    { label: "Cookie Policy", href: "/cookies" },
-    { label: "Disclaimer", href: "/disclaimer" },
+    { href: "#", label: "Terms of Service" },
+    { href: "#", label: "Privacy Policy" },
+    { href: "#", label: "Cookie Policy" },
   ],
 };
 
-const socialLinks = [
-  { icon: TwitterLogo, href: "https://twitter.com/ignite_launchpad", label: "Twitter", external: true },
-  { icon: GithubLogo, href: "https://github.com/ignite-launchpad", label: "GitHub", external: true },
-  { icon: DiscordLogo, href: "https://discord.gg/ignite", label: "Discord", external: true },
-  { icon: TelegramLogo, href: "https://t.me/ignite_launchpad", label: "Telegram", external: true },
-  { icon: LinkedinLogo, href: "https://linkedin.com/company/ignite-launchpad", label: "LinkedIn", external: true },
-  { icon: Envelope, href: "mailto:hello@ignite-launchpad.com", label: "Email", external: true },
-];
-
 export function Footer() {
   return (
-    <footer className="relative border-t py-16 px-5" style={{ borderColor: "var(--color-border)" }}>
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
-          {/* Brand */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4" aria-label="IGNITE Home">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl font-bold" style={{ background: "linear-gradient(135deg, var(--color-accent), var(--color-accent-strong))", color: "#0a0a0f" }}>
-                <span>I</span>
+    <footer className="border-t border-[var(--color-border)] bg-[var(--color-card)]/30">
+      <div className="max-w-7xl mx-auto px-5 py-12 md:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-12">
+          {/* Brand column */}
+          <div className="col-span-2 md:col-span-4">
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--color-accent)" }}>
+                <Lightning size={16} className="text-[#0a0a0f]" />
               </div>
-              <span className="text-2xl font-bold tracking-tight">IGNITE</span>
+              <span className="text-base font-bold tracking-tight">Ignite</span>
             </Link>
-            <p className="text-[var(--color-text-muted)] leading-relaxed max-w-xs mb-6">
-              The launchpad for Web3's next unicorns. Secure, transparent, and built by protocol engineers.
+            <p className="text-sm text-[var(--color-text-muted)] leading-relaxed max-w-xs mb-6">
+              The launchpad infrastructure for Web3&apos;s next unicorns. Secure, transparent, and compliant.
             </p>
-            <div className="flex items-center gap-4">
-              {socialLinks.map((social) => (
+            <div className="flex gap-3">
+              {["Twitter", "Discord", "Telegram", "GitHub"].map((s) => (
                 <a
-                  key={social.label}
-                  href={social.href}
-                  target={social.external ? "_blank" : undefined}
-                  rel={social.external ? "noopener noreferrer" : undefined}
-                  className="w-10 h-10 rounded-lg flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
-                  style={{ background: "var(--color-border)", border: "1px solid var(--color-border)" }}
-                  aria-label={social.label}
+                  key={s}
+                  href="#"
+                  className="w-8 h-8 rounded-lg border border-[var(--color-border)] flex items-center justify-center text-[var(--color-text-muted)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)]/30 transition-colors text-[10px] font-medium"
                 >
-                  <social.icon size={20} />
+                  {s[0]}
                 </a>
               ))}
             </div>
           </div>
 
-          {/* Product */}
-          <nav aria-label="Product links">
-            <h4 className="font-semibold mb-4">Product</h4>
-            <ul className="space-y-3">
-              {footerLinks.Product.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Developers */}
-          <nav aria-label="Developer links">
-            <h4 className="font-semibold mb-4">Developers</h4>
-            <ul className="space-y-3">
-              {footerLinks.Developers.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
-                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors inline-flex items-center gap-1"
-                  >
-                    {link.label}
-                    {link.external && <ArrowRight size={12} />}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Company */}
-          <nav aria-label="Company links">
-            <h4 className="font-semibold mb-4">Company</h4>
-            <ul className="space-y-3">
-              {footerLinks.Company.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Legal */}
-          <nav aria-label="Legal links">
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-3">
-              {footerLinks.Legal.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {/* Link columns */}
+          {Object.entries(footerLinks).map(([category, links]) => (
+            <div key={category} className="md:col-span-2">
+              <h4 className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-text-muted)] mb-4">
+                {category}
+              </h4>
+              <ul className="space-y-2.5">
+                {links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        {/* Bottom */}
-        <div className="pt-8 border-t flex flex-col md:flex-row items-center justify-between gap-4" style={{ borderColor: "var(--color-border)" }}>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            © {new Date().getFullYear()} IGNITE. All rights reserved.
+        {/* Bottom bar */}
+        <div className="mt-12 pt-6 border-t border-[var(--color-border)] flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-[var(--color-text-muted)]">
+            © 2025 Ignite Launchpad. All rights reserved.
           </p>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Not financial advice. Do your own research.
-          </p>
+          <div className="flex items-center gap-1">
+            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span className="text-[10px] text-[var(--color-text-muted)]">All systems operational</span>
+          </div>
         </div>
       </div>
     </footer>

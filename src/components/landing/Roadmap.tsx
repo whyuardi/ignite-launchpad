@@ -1,166 +1,135 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { CheckCircle, Circle, ArrowRight } from "@phosphor-icons/react";
+import { motion } from "motion/react";
 
 const phases = [
   {
     quarter: "Q1 2025",
     title: "Foundation",
-    status: "completed",
-    items: [
-      "Smart contract development & audit",
-      "Core team formation",
-      "Seed funding ($2.5M)",
-      "Testnet launch on Sepolia",
-    ],
+    description: "Platform architecture. Smart contract audits. Security partnerships established.",
+    status: "done",
+    highlights: ["Seed round closed", "Chainlink integration", "Legal framework"],
   },
   {
     quarter: "Q2 2025",
     title: "Launch",
-    status: "active",
-    items: [
-      "Mainnet deployment",
-      "IGNITE token generation event",
-      "First 10 project launches",
-      "Multi-chain bridge activation",
-    ],
+    description: "Mainnet deployment. First 10 projects launch. Community reaches 10,000 holders.",
+    status: "done",
+    highlights: ["Mainnet live", "10 projects", "10K holders"],
   },
   {
     quarter: "Q3 2025",
-    title: "Scale",
-    status: "upcoming",
-    items: [
-      "100+ projects launched",
-      "Institutional investor portal",
-      "Advanced analytics dashboard",
-      "Governance module beta",
-    ],
+    title: "Expansion",
+    description: "Multi-chain support. DEX integration. Cross-chain bridging for token sales.",
+    status: "active",
+    highlights: ["5 chains", "DEX listings", "Cross-chain bridge"],
   },
   {
     quarter: "Q4 2025",
-    title: "Ecosystem",
+    title: "Scale",
+    description: "Institutional features. Compliance tools. White-label launchpad solution.",
     status: "upcoming",
-    items: [
-      "Incubator program launch",
-      "Cross-chain yield aggregation",
-      "DAO governance activation",
-      "1M+ unique participants",
-    ],
+    highlights: ["KYC/AML suite", "White-label", "Institutional API"],
   },
   {
     quarter: "2026+",
-    title: "Evolution",
+    title: "Ecosystem",
+    description: "DAO governance. Staking. Incubator program for early-stage projects.",
     status: "upcoming",
-    items: [
-      "AI-powered project scoring",
-      "Real-world asset tokenization",
-      "Institutional compliance suite",
-      "Global regulatory partnerships",
-    ],
+    highlights: ["DAO launch", "Staking live", "Incubator"],
   },
 ];
 
 export function Roadmap() {
-  const reduce = useReducedMotion();
-  
   return (
-    <section className="relative py-24 md:py-32 px-5 overflow-hidden" aria-labelledby="roadmap-heading">
-      {/* Subtle diagonal lines */}
-      <div className="absolute inset-0 opacity-[0.015]" style={{
-        backgroundImage: `repeating-linear-gradient(45deg, var(--color-accent) 0, var(--color-accent) 1px, transparent 0, transparent 50%)`,
-        backgroundSize: "40px 40px",
-      }} />
-      
-      <div className="max-w-5xl mx-auto relative">
-        {/* Header */}
-        <motion.div
-          className="mb-16 max-w-2xl"
-          initial={reduce ? false : { opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-accent)] mb-4">
-            Roadmap
+    <section className="relative py-16 md:py-24 px-5 overflow-hidden" id="roadmap">
+      <div className="max-w-7xl mx-auto">
+        {/* Section header */}
+        <div className="mb-12">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-px bg-[var(--color-accent)]" />
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[var(--color-accent)]">
+              Roadmap
+            </span>
           </div>
-          <h2 id="roadmap-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
-            The <span className="text-gradient">Path</span> Forward
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-[1.1] max-w-lg">
+            Building in
+            <br />
+            <span className="text-[var(--color-accent)]">public view</span>
           </h2>
-          <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            Milestones that matter. Shipped features, not vaporware.
-          </p>
-        </motion.div>
-        
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-[19px] top-0 bottom-0 w-px bg-gradient-to-b from-[var(--color-accent)] via-[var(--color-border)] to-transparent" />
-          
-          <div className="space-y-8">
-            {phases.map((phase, index) => (
-              <motion.div
-                key={phase.quarter}
-                className="relative pl-14"
-                initial={reduce ? false : { opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.15, duration: 0.5 }}
-              >
-                {/* Timeline dot */}
-                <div className="absolute left-0 top-1">
-                  {phase.status === "completed" ? (
-                    <CheckCircle size={40} className="text-[var(--color-success)]" weight="fill" />
-                  ) : phase.status === "active" ? (
-                    <div className="relative">
-                      <Circle size={40} className="text-[var(--color-accent)]" weight="fill" />
-                      <div className="absolute inset-0 animate-ping">
-                        <Circle size={40} className="text-[var(--color-accent)] opacity-30" weight="fill" />
-                      </div>
-                    </div>
-                  ) : (
-                    <Circle size={40} className="text-[var(--color-border)]" weight="light" />
-                  )}
+        </div>
+
+        {/* Roadmap - editorial style with alternating layouts */}
+        <div className="space-y-0">
+          {phases.map((phase, i) => (
+            <motion.div
+              key={phase.quarter}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+            >
+              <div className="group relative grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-8 py-8 md:py-12 border-t border-[var(--color-border)] hover:border-[var(--color-accent)]/20 transition-colors">
+                {/* Quarter label */}
+                <div className={`md:col-span-2 flex items-center gap-3 ${i % 2 === 0 ? '' : 'md:order-last'}`}>
+                  <span className={`text-xs font-mono uppercase tracking-wider px-2.5 py-1 rounded-full ${
+                    phase.status === 'done' 
+                      ? 'bg-[var(--color-accent)]/10 text-[var(--color-accent)]' 
+                      : phase.status === 'active'
+                      ? 'bg-[var(--color-accent)]/20 text-[var(--color-accent)] ring-1 ring-[var(--color-accent)]/30'
+                      : 'bg-white/5 text-[var(--color-text-muted)]'
+                  }`}>
+                    {phase.quarter}
+                  </span>
                 </div>
-                
-                {/* Content card */}
-                <div className={`relative p-5 rounded-xl border transition-all duration-300 ${
-                  phase.status === "active" 
-                    ? "border-[var(--color-accent)]/30 bg-[var(--color-accent)]/5" 
-                    : "border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-border-hover)]"
-                }`}>
-                  {/* Quarter badge */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className={`text-xs font-mono px-2 py-0.5 rounded ${
-                      phase.status === "active" 
-                        ? "bg-[var(--color-accent)]/20 text-[var(--color-accent)]" 
-                        : phase.status === "completed"
-                          ? "bg-[var(--color-success)]/20 text-[var(--color-success)]"
-                          : "bg-[var(--color-border)] text-[var(--color-text-muted)]"
-                    }`}>
-                      {phase.quarter}
-                    </span>
-                    <h3 className="text-lg font-semibold">{phase.title}</h3>
-                    {phase.status === "active" && (
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-[var(--color-accent)] bg-[var(--color-accent)]/10 px-2 py-0.5 rounded-full">
-                        In Progress
+
+                {/* Title */}
+                <div className={`md:col-span-3 ${i % 2 === 0 ? '' : 'md:order-3'}`}>
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl md:text-2xl font-bold">{phase.title}</h3>
+                    {phase.status === 'active' && (
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-accent)] opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--color-accent)]" />
                       </span>
                     )}
                   </div>
-                  
-                  {/* Items */}
-                  <ul className="space-y-2">
-                    {phase.items.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-sm text-[var(--color-text-muted)]">
-                        <ArrowRight size={14} className={`mt-0.5 shrink-0 ${
-                          phase.status === "completed" ? "text-[var(--color-success)]" : "text-[var(--color-border)]"
-                        }`} />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-[var(--color-text-muted)] mt-2 leading-relaxed">
+                    {phase.description}
+                  </p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+
+                {/* Highlights */}
+                <div className={`md:col-span-7 ${i % 2 === 0 ? '' : 'md:order-2'}`}>
+                  <div className="flex flex-wrap gap-2">
+                    {phase.highlights.map((h) => (
+                      <span 
+                        key={h}
+                        className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
+                          phase.status === 'done'
+                            ? 'border-[var(--color-accent)]/20 text-[var(--color-accent)] bg-[var(--color-accent)]/5'
+                            : phase.status === 'active'
+                            ? 'border-[var(--color-accent)]/30 text-[var(--color-accent)] bg-[var(--color-accent)]/10'
+                            : 'border-[var(--color-border)] text-[var(--color-text-muted)] bg-white/2'
+                        }`}
+                      >
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Progress indicator */}
+                {phase.status === 'done' && (
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 hidden md:block">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-[var(--color-accent)]">
+                      <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>

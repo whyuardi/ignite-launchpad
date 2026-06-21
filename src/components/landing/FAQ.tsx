@@ -1,125 +1,114 @@
 "use client";
 
 import { useState } from "react";
-import { motion, useReducedMotion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { CaretDown } from "@phosphor-icons/react";
 
 const faqs = [
   {
     q: "What is Ignite Launchpad?",
-    a: "Ignite is a multi-chain token launch platform that provides secure, transparent, and compliant infrastructure for Web3 projects to conduct token sales. We handle the technical complexity so founders can focus on building.",
+    a: "Ignite is a Web3 launchpad infrastructure for secure, transparent, and compliant token sales. We provide the tools for projects to raise capital while protecting investors through audited smart contracts and tiered allocation systems.",
   },
   {
-    q: "How do I participate in a token sale?",
-    a: "Connect your wallet, complete KYC if required, and stake IGNITE tokens for allocation rights. Tier levels determine your maximum allocation. Sales are first-come-first-served within each tier.",
+    q: "How do I participate in a sale?",
+    a: "Connect your wallet, complete KYC verification, and stake IGT tokens to access your allocation tier. Higher stakes unlock larger allocation slots. Sales open at announced times with first-come-first-served or lottery mechanisms.",
   },
   {
-    q: "Which chains are supported?",
-    a: "We currently support Ethereum, Polygon, BSC, Arbitrum, and Base. New chains are added quarterly based on community governance votes and ecosystem demand.",
+    q: "What chains are supported?",
+    a: "Ethereum, Polygon, BNB Chain, Arbitrum, and Base at launch. More chains coming in Q3 2025. Each chain has native contract deployment with cross-chain bridge support.",
   },
   {
     q: "What are the fees?",
-    a: "Platform fee is 2% of funds raised, paid by the project. Participants pay no fees. IGNITE stakers receive up to 50% fee discounts based on their stake weight and lock duration.",
+    a: "5% of funds raised, paid by the project. No fees to participants. IGT stakers receive up to 50% fee discount based on their tier. Additional services (audit, marketing, liquidity provisioning) have separate pricing.",
   },
   {
-    q: "How is security ensured?",
-    a: "All smart contracts undergo multiple audits from top firms. We implement reentrancy guards, pausability, timelock controls, and multi-sig administration. Bug bounty program runs continuously.",
+    q: "How is this different from other launchpads?",
+    a: "Multi-chain by default, not as an afterthought. Enterprise-grade security with TimeLockController and Multi-sig built into every deployment. Transparent on-chain vesting. No hidden fees or rug-pull vectors.",
   },
   {
-    q: "Can I list my project on Ignite?",
-    a: "Projects can apply through our incubator program or direct listing. Requirements include smart contract audit, team verification, legal entity, and minimum viable product. Selection is competitive.",
+    q: "What is the IGT token?",
+    a: "The native utility token powering Ignite. Used for governance voting, staking for tier access, fee discounts, and ecosystem incentives. 1 billion total supply with structured vesting across team, ecosystem, and public allocation.",
   },
   {
-    q: "What is the IGNITE token?",
-    a: "IGNITE is the native utility token used for staking, governance, fee discounts, and revenue sharing. Total supply is 100M with no team tokens at launch. Community owns 60% of allocation.",
+    q: "How are projects vetted?",
+    a: "Every project undergoes technical audit (smart contract review), team verification (doxxed founders required), market analysis, and legal compliance check. Failed audits result in rejection. Community voting on final approvals.",
   },
   {
-    q: "How do staking rewards work?",
-    a: "Stake IGNITE to earn a share of 10% of all platform fees, distributed quarterly. APY is dynamic based on total staked amount. Auto-compounding available. Minimum lock period is 30 days.",
+    q: "Can I list my project?",
+    a: "Yes. Apply through the Launchpad Portal with your whitepaper, team info, and technical specs. Approval typically takes 2-4 weeks. Accepted projects receive full support: audit, launch infrastructure, marketing, and post-launch support.",
   },
 ];
 
-function FaqItem({ faq, index }: { faq: typeof faqs[0]; index: number }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const reduce = useReducedMotion();
-  
-  return (
-    <motion.div
-      className="border-b border-[var(--color-border)] last:border-0"
-      initial={reduce ? false : { opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05, duration: 0.4 }}
-    >
-      <button
-        className="w-full py-5 flex items-center justify-between text-left group"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
-      >
-        <span className="font-medium pr-4 group-hover:text-[var(--color-accent)] transition-colors">
-          {faq.q}
-        </span>
-        <motion.div
-          animate={{ rotate: isOpen ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
-          className="shrink-0"
-        >
-          <CaretDown size={18} className="text-[var(--color-text-muted)]" />
-        </motion.div>
-      </button>
-      
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="overflow-hidden"
-          >
-            <p className="pb-5 text-sm text-[var(--color-text-muted)] leading-relaxed max-w-3xl">
-              {faq.a}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
 export function FAQ() {
-  const reduce = useReducedMotion();
-  
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
-    <section className="relative py-24 md:py-32 px-5" aria-labelledby="faq-heading">
-      <div className="max-w-4xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
-          {/* Header - Left column */}
-          <motion.div
-            className="lg:col-span-2"
-            initial={reduce ? false : { opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-accent)] mb-4">
+    <section className="relative py-16 md:py-24 px-5 overflow-hidden" id="faq">
+      <div className="max-w-3xl mx-auto">
+        {/* Section header */}
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-px bg-[var(--color-accent)]" />
+            <span className="text-xs font-mono uppercase tracking-[0.25em] text-[var(--color-accent)]">
               FAQ
-            </div>
-            <h2 id="faq-heading" className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
-              Questions?
-            </h2>
-            <p className="text-[var(--color-text-muted)] leading-relaxed">
-              Everything you need to know about Ignite Launchpad. Can't find what you're looking for? 
-              <a href="#" className="text-[var(--color-accent)] hover:underline ml-1">Contact us</a>
-            </p>
-          </motion.div>
-          
-          {/* FAQ items - Right column */}
-          <div className="lg:col-span-3">
-            <div className="divide-y divide-[var(--color-border)]">
-              {faqs.map((faq, index) => (
-                <FaqItem key={index} faq={faq} index={index} />
-              ))}
-            </div>
+            </span>
           </div>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight leading-[1.1]">
+            Common
+            <br />
+            <span className="text-[var(--color-accent)]">questions</span>
+          </h2>
+        </div>
+
+        {/* FAQ items */}
+        <div className="space-y-0">
+          {faqs.map((faq, i) => (
+            <div 
+              key={i} 
+              className="border-t border-[var(--color-border)]"
+            >
+              <button
+                onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                className="w-full flex items-center justify-between py-5 text-left group"
+              >
+                <span className="text-sm md:text-base font-medium pr-4 group-hover:text-[var(--color-accent)] transition-colors">
+                  {faq.q}
+                </span>
+                <motion.div
+                  animate={{ rotate: openIndex === i ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="flex-shrink-0"
+                >
+                  <CaretDown size={16} className="text-[var(--color-text-muted)]" />
+                </motion.div>
+              </button>
+              <AnimatePresence>
+                {openIndex === i && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    <p className="text-sm text-[var(--color-text-muted)] leading-relaxed pb-5 max-w-2xl">
+                      {faq.a}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom note */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-[var(--color-text-muted)]">
+            Still have questions?{" "}
+            <a href="mailto:support@ignitelaunchpad.io" className="text-[var(--color-accent)] hover:underline">
+              Contact support
+            </a>
+          </p>
         </div>
       </div>
     </section>

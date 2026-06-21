@@ -1,10 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/Button";
-import { ListDashes, X, Sparkle } from "@phosphor-icons/react";
-import { useState } from "react";
+import { Lightning } from "@phosphor-icons/react";
 
 const navLinks = [
   { href: "#features", label: "Features" },
@@ -15,84 +13,53 @@ const navLinks = [
 ];
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="glass-header fixed top-0 left-0 right-0 z-50">
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-[var(--color-bg)]/80 backdrop-blur-xl border-b border-[var(--color-border)]" : ""
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2" aria-label="IGNITE Home">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-xl font-bold" style={{ background: "linear-gradient(135deg, var(--color-accent), var(--color-accent-strong))", color: "#0a0a0f" }}>
-            <Sparkle size={22} />
+        <Link href="/" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: "var(--color-accent)" }}>
+            <Lightning size={16} className="text-[#0a0a0f]" />
           </div>
-          <span className="text-xl font-bold tracking-tight">IGNITE</span>
+          <span className="text-base font-bold tracking-tight">Ignite</span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link
+            <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+              className="text-xs font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors uppercase tracking-wider"
             >
               {link.label}
-            </Link>
+            </a>
           ))}
         </nav>
 
-        {/* Desktop CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <Link href="#faq" className="text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors">
-            Documentation
-          </Link>
-          <Link href="/dashboard" className="btn-primary inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-[var(--radius-md)]">
+        {/* CTA */}
+        <div className="flex items-center gap-3">
+          <Link
+            href="/dashboard"
+            className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all hover:opacity-90"
+            style={{ background: "var(--color-accent)", color: "#0a0a0f" }}
+          >
             Launch App
           </Link>
         </div>
-
-        {/* Mobile ListDashes Button */}
-        <button
-          className="md:hidden p-2 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-expanded={isMenuOpen}
-          aria-controls="mobile-menu"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-        >
-          {isMenuOpen ? <X size={24} /> : <ListDashes size={24} />}
-        </button>
       </div>
-
-      {/* Mobile ListDashes */}
-      <motion.div
-        id="mobile-menu"
-        className="md:hidden px-5 pb-6 border-t"
-        style={{ borderColor: "var(--color-border)", overflow: "hidden" }}
-        initial={{ opacity: 0, height: 0 }}
-        animate={{ opacity: isMenuOpen ? 1 : 0, height: isMenuOpen ? "auto" : 0 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-      >
-        <nav className="flex flex-col gap-2 pt-4" aria-label="Mobile navigation">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="py-3 text-base font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {link.label}
-            </Link>
-          ))}
-          <div className="flex flex-col gap-3 pt-4 border-t" style={{ borderColor: "var(--color-border)" }}>
-            <Link href="#faq" className="py-2 text-base font-medium text-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors">
-              Documentation
-            </Link>
-            <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="btn-primary w-full inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-[var(--radius-md)]">
-              Launch App
-            </Link>
-          </div>
-        </nav>
-      </motion.div>
     </header>
   );
 }

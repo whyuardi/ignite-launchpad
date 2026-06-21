@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "motion/react";
-import { Sparkle } from "@phosphor-icons/react";
+import { Sparkle, Wallet, ArrowUpRight, ArrowDown, Check, Clock, LinkSimple } from "@phosphor-icons/react";
 
 // ═══════════════════════════════════════════════════════════════════
 // Types
@@ -36,7 +36,7 @@ const TIERS: Tier[] = [
   {
     id: "seed",
     name: "Seed",
-    color: "#fbbf24",
+    color: "#FBBF24",
     minStake: 100,
     allocation: 0.5,
     icon: "🌱",
@@ -45,7 +45,7 @@ const TIERS: Tier[] = [
   {
     id: "growth",
     name: "Growth",
-    color: "#f59e0b",
+    color: "#F59E0B",
     minStake: 1000,
     allocation: 2.0,
     icon: "🌿",
@@ -54,7 +54,7 @@ const TIERS: Tier[] = [
   {
     id: "scale",
     name: "Scale",
-    color: "#d97706",
+    color: "#D97706",
     minStake: 5000,
     allocation: 5.0,
     icon: "🌳",
@@ -63,7 +63,7 @@ const TIERS: Tier[] = [
   {
     id: "summit",
     name: "Summit",
-    color: "#b45309",
+    color: "#B45309",
     minStake: 25000,
     allocation: 15.0,
     icon: "⛰️",
@@ -72,11 +72,11 @@ const TIERS: Tier[] = [
 ];
 
 const MOCK_TXS: Transaction[] = [
-  { id: "1", type: "purchase", amount: 2500, tier: "Growth", date: "2025-03-15", status: "completed", txHash: "0x1a2b...3c4d" },
-  { id: "2", type: "stake", amount: 5000, tier: "Scale", date: "2025-03-10", status: "completed", txHash: "0x5e6f...7g8h" },
-  { id: "3", type: "claim", amount: 125, tier: "Growth", date: "2025-03-08", status: "completed", txHash: "0x9i0j...1k2l" },
-  { id: "4", type: "purchase", amount: 1000, tier: "Seed", date: "2025-02-28", status: "completed", txHash: "0x3m4n...5o6p" },
-  { id: "5", type: "stake", amount: 25000, tier: "Summit", date: "2025-02-20", status: "pending", txHash: "0x7q8r...9s0t" },
+  { id: "1", type: "purchase", amount: 2500, tier: "Growth", date: "Mar 15, 2025", status: "completed", txHash: "0x1a2b...3c4d" },
+  { id: "2", type: "stake", amount: 5000, tier: "Scale", date: "Mar 10, 2025", status: "completed", txHash: "0x5e6f...7g8h" },
+  { id: "3", type: "claim", amount: 125, tier: "Growth", date: "Mar 8, 2025", status: "completed", txHash: "0x9i0j...1k2l" },
+  { id: "4", type: "purchase", amount: 1000, tier: "Seed", date: "Feb 28, 2025", status: "completed", txHash: "0x3m4n...5o6p" },
+  { id: "5", type: "stake", amount: 25000, tier: "Summit", date: "Feb 20, 2025", status: "pending", txHash: "0x7q8r...9s0t" },
 ];
 
 const SALE_DATA = {
@@ -90,32 +90,45 @@ const SALE_DATA = {
 };
 
 // ═══════════════════════════════════════════════════════════════════
+// Design tokens
+// ═══════════════════════════════════════════════════════════════════
+
+const CARD = "rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)]";
+const CARD_ELEVATED = "rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)]";
+const LABEL = "text-xs font-medium text-[var(--color-text-secondary)] uppercase tracking-wider";
+const VALUE = "text-2xl font-bold tracking-tight";
+const SUB = "text-xs text-[var(--color-text-muted)]";
+
+// ═══════════════════════════════════════════════════════════════════
 // Components
 // ═══════════════════════════════════════════════════════════════════
+
+function StatCard({ label, value, sub, accent }: { label: string; value: string; sub: string; accent?: string }) {
+  return (
+    <div className={`p-5 ${CARD}`}>
+      <div className={LABEL}>{label}</div>
+      <div className={`${VALUE} mt-2`} style={{ color: accent || "var(--color-text)" }}>{value}</div>
+      <div className={`${SUB} mt-1`}>{sub}</div>
+    </div>
+  );
+}
 
 function WalletConnect({ onConnect }: { onConnect: (addr: string) => void }) {
   const [isConnecting, setIsConnecting] = useState(false);
 
   const connect = async () => {
     setIsConnecting(true);
-    // Simulate wallet connection
     await new Promise((r) => setTimeout(r, 1500));
-    const mockAddr = "0x05bC...9205";
-    onConnect(mockAddr);
+    onConnect("0x05bC...9205");
     setIsConnecting(false);
   };
 
   return (
-    <motion.button
+    <button
       onClick={connect}
       disabled={isConnecting}
-      className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all"
-      style={{
-        background: isConnecting ? "var(--color-border)" : "var(--color-accent)",
-        color: "#0a0a0f",
-      }}
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
+      className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all hover:opacity-90 disabled:opacity-50"
+      style={{ background: "var(--color-accent)", color: "#0a0a0f" }}
     >
       {isConnecting ? (
         <>
@@ -124,15 +137,11 @@ function WalletConnect({ onConnect }: { onConnect: (addr: string) => void }) {
         </>
       ) : (
         <>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M20 12V8H6a2 2 0 01-2-2c0-1.1.9-2 2-2h12v4" />
-            <path d="M4 6v12c0 1.1.9 2 2 2h14v-4" />
-            <path d="M18 12a2 2 0 000 4h4v-4h-4z" />
-          </svg>
+          <Wallet size={18} weight="fill" />
           Connect Wallet
         </>
       )}
-    </motion.button>
+    </button>
   );
 }
 
@@ -141,31 +150,36 @@ function SaleProgress() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between text-sm">
-        <span className="text-[var(--color-text-muted)]">Sale Progress</span>
-        <span className="font-medium">{percent.toFixed(1)}%</span>
+      {/* Progress bar */}
+      <div>
+        <div className="flex justify-between items-baseline mb-2">
+          <span className="text-sm font-medium">Sale Progress</span>
+          <span className="text-sm font-bold" style={{ color: "var(--color-accent)" }}>{percent.toFixed(1)}%</span>
+        </div>
+        <div className="h-3 rounded-full overflow-hidden" style={{ background: "var(--color-border)" }}>
+          <motion.div
+            className="h-full rounded-full"
+            style={{ background: "linear-gradient(90deg, var(--color-accent), var(--color-accent-strong))" }}
+            initial={{ width: 0 }}
+            animate={{ width: `${percent}%` }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          />
+        </div>
       </div>
-      <div className="h-3 rounded-full overflow-hidden" style={{ background: "var(--color-border)" }}>
-        <motion.div
-          className="h-full rounded-full"
-          style={{ background: "linear-gradient(90deg, var(--color-accent), var(--color-accent-strong))" }}
-          initial={{ width: 0 }}
-          animate={{ width: `${percent}%` }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
-        />
-      </div>
-      <div className="grid grid-cols-3 gap-4 text-center">
-        <div>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-3 gap-4">
+        <div className="text-center p-3 rounded-xl" style={{ background: "var(--color-bg)" }}>
           <div className="text-lg font-bold">${(SALE_DATA.raised / 1000).toFixed(0)}K</div>
-          <div className="text-xs text-[var(--color-text-muted)]">Raised</div>
+          <div className={SUB}>Raised</div>
         </div>
-        <div>
+        <div className="text-center p-3 rounded-xl" style={{ background: "var(--color-bg)" }}>
           <div className="text-lg font-bold">${(SALE_DATA.hardCap / 1000).toFixed(0)}K</div>
-          <div className="text-xs text-[var(--color-text-muted)]">Hard Cap</div>
+          <div className={SUB}>Hard Cap</div>
         </div>
-        <div>
+        <div className="text-center p-3 rounded-xl" style={{ background: "var(--color-bg)" }}>
           <div className="text-lg font-bold">{SALE_DATA.participants.toLocaleString()}</div>
-          <div className="text-xs text-[var(--color-text-muted)]">Participants</div>
+          <div className={SUB}>Participants</div>
         </div>
       </div>
     </div>
@@ -181,34 +195,29 @@ function TierSelector({
 }) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      {TIERS.map((tier) => (
-        <motion.button
-          key={tier.id}
-          onClick={() => onSelect(tier.id)}
-          className="p-4 rounded-xl text-left transition-all"
-          style={{
-            background:
-              selectedTier === tier.id
-                ? `linear-gradient(135deg, ${tier.color}15, ${tier.color}08)`
-                : "var(--color-bg)",
-            border: `1px solid ${selectedTier === tier.id ? `${tier.color}50` : "var(--color-border)"}`,
-          }}
-          whileHover={{ scale: 1.01 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          <div className="flex items-center gap-2 mb-1.5">
-            <span style={{ color: tier.color }}>{tier.icon}</span>
-            <span className="font-medium text-sm">{tier.name}</span>
-          </div>
-          <div className="text-xs text-[var(--color-text-muted)] mb-2">
-            Min: {tier.minStake.toLocaleString()} IGNITE
-          </div>
-          <div className="text-lg font-bold" style={{ color: tier.color }}>
-            {tier.allocation}%
-          </div>
-          <div className="text-[10px] text-[var(--color-text-muted)]">allocation</div>
-        </motion.button>
-      ))}
+      {TIERS.map((tier) => {
+        const isSelected = selectedTier === tier.id;
+        return (
+          <button
+            key={tier.id}
+            onClick={() => onSelect(tier.id)}
+            className={`p-4 rounded-xl text-left transition-all ${isSelected ? "ring-2 ring-[var(--color-accent)]" : "hover:bg-[var(--color-bg-elevated)]"}`}
+            style={{
+              background: isSelected ? `${tier.color}10` : "var(--color-bg)",
+              border: `1px solid ${isSelected ? tier.color : "var(--color-border)"}`,
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-lg">{tier.icon}</span>
+              <span className="font-semibold text-sm">{tier.name}</span>
+            </div>
+            <div className={`${VALUE} text-xl`} style={{ color: tier.color }}>
+              {tier.allocation}%
+            </div>
+            <div className={`${SUB} mt-1`}>Min {tier.minStake.toLocaleString()}</div>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -233,13 +242,14 @@ function TokenSale({ walletAddress }: { walletAddress: string | null }) {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold flex items-center gap-2">
-          <Sparkle size={20} weight="fill" style={{ color: "var(--color-accent)" }} />
+          <Sparkle size={22} weight="fill" style={{ color: "var(--color-accent)" }} />
           Active Sale
         </h2>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium"
-          style={{ background: "#22c55e20", color: "#22c55e", border: "1px solid #22c55e40" }}>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+          style={{ background: "#22c55e15", color: "#22c55e", border: "1px solid #22c55e30" }}>
           <div className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
           Live
         </div>
@@ -247,65 +257,72 @@ function TokenSale({ walletAddress }: { walletAddress: string | null }) {
 
       <SaleProgress />
 
+      {/* Tier Selection */}
       <div>
-        <h3 className="text-sm font-medium mb-3 text-[var(--color-text-muted)]">Select Tier</h3>
+        <h3 className={`${LABEL} mb-3`}>Select Tier</h3>
         <TierSelector selectedTier={selectedTier} onSelect={setSelectedTier} />
       </div>
 
-      <div className="p-4 rounded-xl" style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}>
-        <h3 className="text-sm font-medium mb-3">Purchase IGNITE</h3>
+      {/* Purchase Form */}
+      <div className={`p-5 ${CARD_ELEVATED}`}>
+        <h3 className="font-semibold mb-3">Purchase IGNITE</h3>
         <div className="flex gap-3">
-          <div className="flex-1">
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="Amount in IGNITE"
-              className="w-full px-4 py-3 rounded-lg text-sm focus:outline-none focus:ring-2"
-              style={{
-                background: "var(--color-bg)",
-                border: "1px solid var(--color-border)",
-                color: "var(--color-text)",
-                
-              }}
-            />
-          </div>
-          <motion.button
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Amount in IGNITE"
+            className="flex-1 px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+            style={{
+              background: "var(--color-bg)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-text)",
+            }}
+          />
+          <button
             onClick={handlePurchase}
             disabled={!amount || !walletAddress || isPurchasing}
-            className="px-6 py-3 rounded-lg text-sm font-medium transition-all disabled:opacity-50"
+            className="px-6 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-40 hover:opacity-90"
             style={{ background: "var(--color-accent)", color: "#0a0a0f" }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
           >
-            {isPurchasing ? "Processing..." : "Buy"}
-          </motion.button>
+            {isPurchasing ? (
+              <span className="flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-[#0a0a0f] border-t-transparent rounded-full animate-spin" />
+                Processing
+              </span>
+            ) : "Buy"}
+          </button>
         </div>
+        
         {amount && (
-          <div className="mt-3 text-sm text-[var(--color-text-muted)]">
-            Cost: {ethCost} ETH • Tier: <span style={{ color: tier.color }}>{tier.name}</span>
+          <div className="mt-3 text-sm">
+            <span className={SUB}>Cost: </span>
+            <span className="font-medium">{ethCost} ETH</span>
+            <span className={SUB}> • Tier: </span>
+            <span style={{ color: tier.color }} className="font-medium">{tier.name}</span>
           </div>
         )}
         {!walletAddress && (
-          <div className="mt-3 text-sm text-amber-500">
+          <div className="mt-3 flex items-center gap-2 text-sm text-amber-500">
+            <Wallet size={14} />
             Connect wallet to purchase
           </div>
         )}
       </div>
 
+      {/* Success Message */}
       {showSuccess && (
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0 }}
           className="p-4 rounded-xl flex items-center gap-3"
-          style={{ background: "#22c55e15", border: "1px solid #22c55e40" }}
+          style={{ background: "#22c55e10", border: "1px solid #22c55e30" }}
         >
           <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: "#22c55e20" }}>
-            ✓
+            <Check size={16} color="#22c55e" weight="bold" />
           </div>
           <div>
-            <div className="text-sm font-medium text-[#22c55e]">Purchase Successful!</div>
+            <div className="text-sm font-semibold text-[#22c55e]">Purchase Successful!</div>
             <div className="text-xs text-[var(--color-text-muted)]">Your IGNITE tokens are being processed</div>
           </div>
         </motion.div>
@@ -317,7 +334,7 @@ function TokenSale({ walletAddress }: { walletAddress: string | null }) {
 function TransactionHistory() {
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-medium text-[var(--color-text-muted)]">Recent Transactions</h3>
+      <h3 className="font-semibold">Recent Transactions</h3>
       <div className="space-y-2">
         {MOCK_TXS.map((tx, i) => (
           <motion.div
@@ -325,35 +342,52 @@ function TransactionHistory() {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="flex items-center justify-between p-3 rounded-lg"
-            style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}
+            className={`flex items-center gap-4 p-4 ${CARD}`}
           >
-            <div className="flex items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-xs"
-                style={{
-                  background: tx.type === "purchase" ? "#22c55e15" : tx.type === "stake" ? "#3b82f615" : "#f59e0b15",
-                  color: tx.type === "purchase" ? "#22c55e" : tx.type === "stake" ? "#3b82f6" : "#f59e0b",
-                }}
-              >
-                {tx.type === "purchase" ? "↑" : tx.type === "stake" ? "◆" : "↓"}
-              </div>
-              <div>
-                <div className="text-sm font-medium capitalize">{tx.type}</div>
-                <div className="text-xs text-[var(--color-text-muted)]">{tx.tier} • {tx.date}</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-sm font-medium">{tx.amount.toLocaleString()} IGNITE</div>
-              <div className="text-xs text-[var(--color-text-muted)] font-mono">{tx.txHash}</div>
-            </div>
+            {/* Type icon */}
             <div
-              className="px-2 py-1 rounded text-[10px] font-medium"
+              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
               style={{
-                background: tx.status === "completed" ? "#22c55e15" : tx.status === "pending" ? "#f59e0b15" : "#ef444415",
-                color: tx.status === "completed" ? "#22c55e" : tx.status === "pending" ? "#f59e0b" : "#ef4444",
+                background: tx.type === "purchase" ? "#22c55e15" : tx.type === "stake" ? "#60A5FA15" : "#F59E0B15",
               }}
             >
+              {tx.type === "purchase" ? (
+                <ArrowUpRight size={18} color="#22c55e" weight="bold" />
+              ) : tx.type === "stake" ? (
+                <LinkSimple size={18} color="#60A5FA" weight="bold" />
+              ) : (
+                <ArrowDown size={18} color="#F59E0B" weight="bold" />
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold capitalize">{tx.type}</span>
+                <span className="text-xs text-[var(--color-text-muted)]">•</span>
+                <span className="text-xs text-[var(--color-text-muted)]">{tx.tier}</span>
+              </div>
+              <div className="text-xs text-[var(--color-text-muted)] mt-0.5">{tx.date}</div>
+            </div>
+
+            {/* Amount */}
+            <div className="text-right shrink-0">
+              <div className="text-sm font-bold">{tx.amount.toLocaleString()}</div>
+              <div className="text-xs text-[var(--color-text-muted)]">IGNITE</div>
+            </div>
+
+            {/* Hash */}
+            <div className="text-xs font-mono text-[var(--color-text-muted)] shrink-0 hidden sm:block">{tx.txHash}</div>
+
+            {/* Status */}
+            <div
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold shrink-0"
+              style={{
+                background: tx.status === "completed" ? "#22c55e15" : tx.status === "pending" ? "#F59E0B15" : "#EF444415",
+                color: tx.status === "completed" ? "#22c55e" : tx.status === "pending" ? "#F59E0B" : "#EF4444",
+              }}
+            >
+              {tx.status === "completed" ? <Check size={12} weight="bold" /> : <Clock size={12} weight="bold" />}
               {tx.status}
             </div>
           </motion.div>
@@ -372,55 +406,43 @@ export default function DashboardContent() {
 
   return (
     <div className="min-h-screen p-6 lg:p-8" style={{ background: "var(--color-bg)" }}>
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* Stats Bar */}
+      <div className="max-w-6xl mx-auto space-y-6">
+        {/* Stats Row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { label: "Total Supply", value: "100M", sub: "IGNITE" },
-            { label: "Price", value: "$0.0024", sub: "per token" },
-            { label: "Time Left", value: SALE_DATA.timeLeft, sub: "until end" },
-            { label: "Your Holdings", value: wallet ? "8,500" : "—", sub: "IGNITE" },
-          ].map((stat, i) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="p-4 rounded-xl"
-              style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}
-            >
-              <div className="text-xs text-[var(--color-text-muted)] mb-1">{stat.label}</div>
-              <div className="text-xl font-bold">{stat.value}</div>
-              <div className="text-xs text-[var(--color-text-muted)]">{stat.sub}</div>
-            </motion.div>
-          ))}
+          <StatCard label="Total Supply" value="100M" sub="IGNITE" />
+          <StatCard label="Price" value="$0.0024" sub="per token" accent="var(--color-accent)" />
+          <StatCard label="Time Left" value={SALE_DATA.timeLeft} sub="until end" />
+          <StatCard label="Your Holdings" value={wallet ? "8,500" : "—"} sub="IGNITE" accent={wallet ? "var(--color-accent)" : undefined} />
         </div>
 
         {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-3 gap-6">
           {/* Left: Token Sale */}
           <div className="lg:col-span-2">
-            <div className="p-6 rounded-2xl" style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}>
+            <div className={`p-6 ${CARD_ELEVATED}`}>
               <TokenSale walletAddress={wallet} />
             </div>
           </div>
 
           {/* Right: Sidebar */}
           <div className="space-y-6">
-            {/* Wallet Status */}
-            <div className="p-6 rounded-2xl" style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}>
+            {/* Wallet Card */}
+            <div className={`p-6 ${CARD_ELEVATED}`}>
               {wallet ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-[var(--color-text-muted)]">Connected</span>
-                    <div className="w-2 h-2 rounded-full bg-[#22c55e]" />
+                    <span className="text-sm font-medium">Connected</span>
+                    <div className="flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium" style={{ background: "#22c55e15", color: "#22c55e" }}>
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />
+                      Active
+                    </div>
                   </div>
-                  <div className="p-3 rounded-lg font-mono text-sm" style={{ background: "var(--color-bg)", border: "1px solid var(--color-border)" }}>
+                  <div className="p-3 rounded-xl font-mono text-sm" style={{ background: "var(--color-bg)", border: "1px solid var(--color-border)" }}>
                     {wallet}
                   </div>
                   <button
                     onClick={() => setWallet(null)}
-                    className="w-full py-2 rounded-lg text-sm font-medium transition-all"
+                    className="w-full py-2.5 rounded-xl text-sm font-medium transition-all hover:opacity-80"
                     style={{ background: "var(--color-border)", color: "var(--color-text-muted)" }}
                   >
                     Disconnect
@@ -428,8 +450,8 @@ export default function DashboardContent() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  <h3 className="text-sm font-medium">Connect Wallet</h3>
-                  <p className="text-xs text-[var(--color-text-muted)]">
+                  <h3 className="font-semibold">Connect Wallet</h3>
+                  <p className="text-sm text-[var(--color-text-muted)]">
                     Connect your wallet to participate in the token sale.
                   </p>
                   <WalletConnect onConnect={setWallet} />
@@ -437,14 +459,14 @@ export default function DashboardContent() {
               )}
             </div>
 
-            {/* Tier Details */}
-            <div className="p-6 rounded-2xl" style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}>
-              <h3 className="text-sm font-medium mb-4">Your Tier Benefits</h3>
+            {/* Tier Benefits */}
+            <div className={`p-6 ${CARD_ELEVATED}`}>
+              <h3 className="font-semibold mb-4">Tier Benefits</h3>
               <div className="space-y-3">
-                {TIERS.slice(0, 3).map((tier) => (
-                  <div key={tier.id} className="flex items-center gap-3">
-                    <span>{tier.icon}</span>
-                    <div className="flex-1">
+                {TIERS.map((tier) => (
+                  <div key={tier.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-bg)] transition-colors">
+                    <span className="text-lg">{tier.icon}</span>
+                    <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium">{tier.name}</div>
                       <div className="text-xs text-[var(--color-text-muted)]">{tier.minStake.toLocaleString()} IGNITE</div>
                     </div>
@@ -459,7 +481,7 @@ export default function DashboardContent() {
         </div>
 
         {/* Transaction History */}
-        <div className="p-6 rounded-2xl" style={{ background: "var(--color-bg-elevated)", border: "1px solid var(--color-border)" }}>
+        <div className={`p-6 ${CARD_ELEVATED}`}>
           <TransactionHistory />
         </div>
       </div>
