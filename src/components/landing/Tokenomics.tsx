@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { Lightning, Target, ChartLineUp, Percent, Bank, Gift } from "@phosphor-icons/react";
 
 const allocations = [
   { label: "Public Sale", percent: 40, color: "#FFB800", amount: "400M IGT" },
@@ -12,12 +13,12 @@ const allocations = [
 ];
 
 const utilities = [
-  { icon: "⚡", title: "Governance", desc: "Vote on proposals, platform upgrades, fee structures" },
-  { icon: "🔥", title: "Staking Rewards", desc: "Earn yield by staking IGT in validator pools" },
-  { icon: "💎", title: "Tier Access", desc: "Higher allocation tiers for active stakers" },
-  { icon: "🚀", title: "Fee Discounts", desc: "Up to 50% discount on launchpad fees" },
-  { icon: "🏦", title: "Treasury Access", desc: "Community-driven fund allocation" },
-  { icon: "🤝", title: "Referral Bonus", desc: "Earn IGT for bringing new participants" },
+  { icon: "governance", title: "Governance", desc: "Vote on proposals, platform upgrades, fee structures" },
+  { icon: "stake", title: "Staking Rewards", desc: "Earn yield by staking IGT in validator pools" },
+  { icon: "tier", title: "Tier Access", desc: "Higher allocation tiers for active stakers" },
+  { icon: "discount", title: "Fee Discounts", desc: "Up to 50% discount on launchpad fees" },
+  { icon: "treasury", title: "Treasury Access", desc: "Community-driven fund allocation" },
+  { icon: "referral", title: "Referral Bonus", desc: "Earn IGT for bringing new participants" },
 ];
 
 export function Tokenomics() {
@@ -145,7 +146,14 @@ export function Tokenomics() {
                     transition={{ duration: 0.4, delay: i * 0.05 }}
                     className="p-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-accent)]/20 transition-colors"
                   >
-                    <div className="text-lg mb-2">{u.icon}</div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--color-accent)]/10 mb-2">
+                      {u.icon === "governance" && <Lightning size={16} className="text-[var(--color-accent)]" />}
+                      {u.icon === "stake" && <Target size={16} className="text-[var(--color-accent)]" />}
+                      {u.icon === "tier" && <ChartLineUp size={16} className="text-[var(--color-accent)]" />}
+                      {u.icon === "discount" && <Percent size={16} className="text-[var(--color-accent)]" />}
+                      {u.icon === "treasury" && <Bank size={16} className="text-[var(--color-accent)]" />}
+                      {u.icon === "referral" && <Gift size={16} className="text-[var(--color-accent)]" />}
+                    </div>
                     <div className="text-sm font-semibold mb-1">{u.title}</div>
                     <div className="text-xs text-[var(--color-text-muted)] leading-relaxed">{u.desc}</div>
                   </motion.div>
