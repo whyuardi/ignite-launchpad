@@ -1,110 +1,121 @@
 "use client";
 
-import { motion } from "motion/react";
-import { Card } from "@/components/ui/Card";
-import { Globe, Shield, Lightning, Users, Lock, ChartBar, Target, ArrowRight } from "@phosphor-icons/react";
+import { motion, useReducedMotion } from "motion/react";
+import { Globe, Shield, Lightning, Users, LinkSimple, ChartLineUp } from "@phosphor-icons/react";
 
 const features = [
   {
     icon: Globe,
-    title: "Multi-Chain Deployment",
-    desc: "Deploy once, launch everywhere. Native support for Ethereum, Polygon, BSC, Arbitrum, Base, and more. Unified contract interface across all EVM chains.",
-    metric: "5+ Chains",
+    title: "Multi-Chain Native",
+    desc: "Launch on Ethereum, Polygon, BSC, Arbitrum, and Base simultaneously. One deployment, five chains.",
+    color: "var(--color-chain-eth)",
+    span: "md:col-span-2 md:row-span-2", // Large cell
+    highlight: true,
   },
   {
     icon: Shield,
-    title: "Enterprise-Grade Security",
-    desc: "ReentrancyGuard, Pausable, Ownable, and TimelockController built-in. Multi-sig admin controls. Emergency withdrawal circuits. Formal verification ready.",
-    metric: "Audited",
+    title: "Battle-Tested Security",
+    desc: "Smart contracts audited by top firms. ReentrancyGuard, Pausable, and timelock controls built-in.",
+    color: "var(--color-success)",
+    span: "md:col-span-1 md:row-span-1",
   },
   {
     icon: Lightning,
-    title: "Automated Liquidity",
-    desc: "Uniswap V3 concentrated liquidity positions auto-created at launch. Dynamic fee tiers. LP tokens locked in timelock. Impermanent loss protection.",
-    metric: "Instant LP",
+    title: "Instant Liquidity",
+    desc: "Automated liquidity bootstrapping via Uniswap V3 concentrated positions. LP locked from day one.",
+    color: "var(--color-accent)",
+    span: "md:col-span-1 md:row-span-1",
   },
   {
     icon: Users,
-    title: "Tiered Allocation System",
-    desc: "KYC-integrated whitelist. Dynamic tiers based on holdings, referrals, and engagement. Guaranteed allocation per tier. Anti-sybil protection.",
-    metric: "4 Tiers",
+    title: "Community First",
+    desc: "Whitelist management, referral rewards, and tiered allocation. Fair launch mechanics guaranteed.",
+    color: "var(--color-chain-polygon)",
+    span: "md:col-span-1 md:row-span-2", // Tall cell
   },
   {
-    icon: Lock,
-    title: "Vesting & Cliff Engine",
-    desc: "Linear, cliff, and custom vesting schedules. Team, advisor, and investor tokens auto-vested. Claim portal with gasless transactions via meta-transactions.",
-    metric: "Flexible",
+    icon: LinkSimple,
+    title: "Cross-Chain Bridge",
+    desc: "Native asset bridging between all supported chains. No wrapped tokens, no third-party risk.",
+    color: "var(--color-chain-arb)",
+    span: "md:col-span-1 md:row-span-1",
   },
   {
-    icon: ChartBar,
+    icon: ChartLineUp,
     title: "Real-Time Analytics",
-    desc: "Live raise progress, participant demographics, chain distribution, and geographic heatmaps. Export data via API. Webhook notifications for milestones.",
-    metric: "Live Data",
-  },
-  {
-    icon: Target,
-    title: "Fair Launch Mechanics",
-    desc: "Fixed price, Dutch auction, or dynamic pricing models. Bot protection via commit-reveal. Whale caps per wallet. Refund mechanism for failed raises.",
-    metric: "3 Models",
-  },
-  {
-    icon: ArrowRight,
-    title: "Post-Launch Support",
-    desc: "Market making partnerships, exchange listing advisory, grant program access, and ongoing technical support. 6-month incubation program included.",
-    metric: "6 Months",
+    desc: "Live sale metrics, participant insights, and on-chain verification dashboards.",
+    color: "var(--color-danger)",
+    span: "md:col-span-1 md:row-span-1",
   },
 ];
 
 export function Features() {
+  const reduce = useReducedMotion();
+  
   return (
     <section className="relative py-24 md:py-32 px-5" aria-labelledby="features-heading">
       <div className="max-w-7xl mx-auto">
+        {/* Header - Left aligned */}
         <motion.div
-          className="text-center max-w-3xl mx-auto mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="mb-12 max-w-2xl"
+          initial={reduce ? false : { opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          <h2 id="features-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            Built for <span className="text-gradient">Founders Who Ship</span>
+          <div className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-accent)] mb-4">
+            Platform
+          </div>
+          <h2 id="features-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            Built for <span className="text-gradient">Scale</span>
           </h2>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
-            Every feature designed from real launch experience. No bloat, no compromise — just the tools you need to raise and scale.
+            Infrastructure that doesn't break when your sale goes viral.
           </p>
         </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 auto-rows-[200px]">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 30 }}
+              className={`group relative p-6 rounded-2xl border border-[var(--color-border)] bg-[var(--color-card)] overflow-hidden transition-all duration-300 hover:border-[var(--color-border-hover)] ${feature.span}`}
+              initial={reduce ? false : { opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+              transition={{ delay: index * 0.1, duration: 0.5 }}
             >
-              <Card variant="accent" padding="lg" hover className="h-full flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-xl"
-                    style={{
-                      background: `linear-gradient(135deg, var(--color-accent), var(--color-accent-strong))`,
-                      color: "#0a0a0f",
-                    }}
-                  >
-                    <feature.icon size={24} />
-                  </div>
-                  <span
-                    className="text-xs font-mono font-medium px-2 py-0.5 rounded-full"
-                    style={{
-                      background: "rgba(240, 192, 64, 0.15)",
-                      color: "var(--color-accent)",
-                      border: "1px solid rgba(240, 192, 64, 0.25)",
-                    }}
-                  >
-                    {feature.metric}
-                  </span>
+              {/* Gradient accent on hover */}
+              <div
+                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{
+                  background: `radial-gradient(circle at 50% 0%, ${feature.color}15, transparent 60%)`,
+                }}
+              />
+              
+              {/* Content */}
+              <div className="relative h-full flex flex-col">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+                  style={{ background: `${feature.color}15` }}
+                >
+                  <feature.icon size={22} style={{ color: feature.color }} />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-[var(--color-text-muted)] leading-relaxed flex-1">{feature.desc}</p>
-              </Card>
+                
+                <h3 className={`font-semibold mb-2 ${feature.highlight ? "text-xl" : "text-lg"}`}>
+                  {feature.title}
+                </h3>
+                
+                <p className={`text-[var(--color-text-muted)] leading-relaxed ${feature.highlight ? "text-sm" : "text-xs"}`}>
+                  {feature.desc}
+                </p>
+                
+                {/* Decorative line */}
+                <div className="mt-auto pt-4">
+                  <div
+                    className="h-px w-12 opacity-40"
+                    style={{ background: feature.color }}
+                  />
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>

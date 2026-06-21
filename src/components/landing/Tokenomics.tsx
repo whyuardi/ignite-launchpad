@@ -1,7 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
-import { Card } from "@/components/ui/Card";
+import { motion, useReducedMotion } from "motion/react";
 import { Users, Building, Gift, Lock, Wallet, ChartLineUp } from "@phosphor-icons/react";
 
 const allocations = [
@@ -15,199 +14,286 @@ const allocations = [
 ];
 
 const utilities = [
-  {
-    icon: Lock,
-    title: "Launchpad Access",
-    desc: "Stake IGNITE for guaranteed allocation in all sales. Tiered by amount and duration.",
-  },
-  {
-    icon: ChartLineUp,
-    title: "Fee Discounts",
-    desc: "Up to 50% off platform fees. Proportional to stake weight and lock duration.",
-  },
-  {
-    icon: Gift,
-    title: "Revenue Share",
-    desc: "10% of platform fees distributed to stakers quarterly. Auto-compounding.",
-  },
-  {
-    icon: Users,
-    title: "Governance Rights",
-    desc: "Vote on protocol upgrades, fee parameters, grant approvals, and new chain deployments.",
-  },
-  {
-    icon: Building,
-    title: "Incubator Priority",
-    desc: "Stakers get early access to incubator deal flow and co-investment opportunities.",
-  },
-  {
-    icon: Wallet,
-    title: "Cross-Chain Utility",
-    desc: "Single staking position, rewards across all supported chains. No bridging needed.",
-  },
+  { icon: Lock, title: "Launchpad Access", desc: "Stake IGNITE for guaranteed allocation in all sales. Tiered by amount and duration." },
+  { icon: ChartLineUp, title: "Fee Discounts", desc: "Up to 50% off platform fees. Proportional to stake weight and lock duration." },
+  { icon: Gift, title: "Revenue Share", desc: "10% of platform fees distributed to stakers quarterly. Auto-compounding." },
+  { icon: Users, title: "Governance Rights", desc: "Vote on protocol upgrades, fee parameters, grant approvals, and new chain deployments." },
+  { icon: Building, title: "Incubator Priority", desc: "Stakers get early access to incubator deal flow and co-investment opportunities." },
+  { icon: Wallet, title: "Cross-Chain Utility", desc: "Single staking position, rewards across all supported chains. No bridging needed." },
 ];
 
-// SVG arc path helper
-function describeArc(cx: number, cy: number, r: number, startAngle: number, endAngle: number) {
-  const start = polarToCartesian(cx, cy, r, endAngle);
-  const end = polarToCartesian(cx, cy, r, startAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-  return [
-    "M", cx, cy,
-    "L", start.x, start.y,
-    "A", r, r, 0, largeArcFlag, 0, end.x, end.y,
-    "Z"
-  ].join(" ");
+// Isometric 3D block component
+function IsometricBlock({ 
+  allocation, 
+  index, 
+  total 
+}: { 
+  allocation: typeof allocations[0]; 
+  index: number;
+  total: number;
+}) {
+  const reduce = useReducedMotion();
+  const height = allocation.percent * 2.5; // Scale height by percentage
+  const delay = index * 0.12;
+  
+  // Calculate position along a curved path
+  const angle = (index / total) * Math.PI * 0.8 - Math.PI * 0.4; // Spread across 144 degrees
+  const radius = 120;
+  const x = Math.sin(angle) * radius;
+  const z = Math.cos(angle) * radius * 0.3; // Compress z for isometric feel
+  
+  return (
+    <motion.div
+      className="absolute"
+      style={{
+        left: `calc(50% + ${x}px)`,
+        bottom: `${50 + z}px`,
+        transform: `translateX(-50%)`,
+      }}
+      initial={reduce ? false : { opacity: 0, y: 40, rotateX: -20 }}
+      animate={{ opacity: 1, y: 0, rotateX: 0 }}
+      transition={{ duration: 0.7, delay, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
+      <div className="relative group cursor-pointer">
+        {/* 3D Block */}
+        <div
+          className="relative"
+          style={{
+            width: `${Math.max(40, allocation.percent * 2.8)}px`,
+            height: `${height}px`,
+            transformStyle: "preserve-3d",
+            transform: "rotateX(-15deg) rotateY(25deg)",
+          }}
+        >
+          {/* Top face */}
+          <div
+            className="absolute inset-0 rounded-sm"
+            style={{
+              background: `linear-gradient(135deg, ${allocation.color}, ${allocation.color}dd)`,
+              transform: `translateZ(${height / 2}px)`,
+              boxShadow: `0 0 20px ${allocation.color}40`,
+            }}
+          />
+          
+          {/* Front face */}
+          <div
+            className="absolute bottom-0 left-0 right-0 rounded-sm"
+            style={{
+              height: `${height}px`,
+              background: `linear-gradient(180deg, ${allocation.color}cc, ${allocation.color}88)`,
+              transform: "rotateX(-90deg)",
+              transformOrigin: "bottom",
+            }}
+          />
+          
+          {/* Right face */}
+          <div
+            className="absolute bottom-0 right-0 rounded-sm"
+            style={{
+              width: "20px",
+              height: `${height}px`,
+              background: `linear-gradient(180deg, ${allocation.color}99, ${allocation.color}55)`,
+              transform: "rotateY(90deg) rotateX(-90deg)",
+              transformOrigin: "bottom right",
+            }}
+          />
+        </div>
+        
+        {/* Label */}
+        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-center">
+          <div className="text-xs font-bold" style={{ color: allocation.color }}>
+            {allocation.percent}%
+          </div>
+          <div className="text-[10px] text-[var(--color-text-muted)] max-w-[80px] truncate">
+            {allocation.label}
+          </div>
+        </div>
+        
+        {/* Hover tooltip */}
+        <div className="absolute -top-16 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+          <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg px-3 py-2 shadow-xl whitespace-nowrap">
+            <div className="text-sm font-bold" style={{ color: allocation.color }}>
+              {allocation.label}
+            </div>
+            <div className="text-xs text-[var(--color-text-muted)]">
+              {allocation.desc}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
-function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
-  const rad = ((angleDeg - 90) * Math.PI) / 180;
-  return {
-    x: cx + r * Math.cos(rad),
-    y: cy + r * Math.sin(rad),
-  };
+// Animated path line connecting blocks
+function AllocationPath() {
+  const points = allocations.map((_, i) => {
+    const angle = (i / allocations.length) * Math.PI * 0.8 - Math.PI * 0.4;
+    const radius = 120;
+    const x = 50 + (Math.sin(angle) * radius / 3.5);
+    const y = 80 - (Math.cos(angle) * radius * 0.15);
+    return `${x},${y}`;
+  }).join(" ");
+  
+  return (
+    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
+      <motion.path
+        d={`M ${points}`}
+        fill="none"
+        stroke="var(--color-accent)"
+        strokeWidth="0.3"
+        strokeDasharray="2 2"
+        initial={{ pathLength: 0, opacity: 0 }}
+        animate={{ pathLength: 1, opacity: 0.4 }}
+        transition={{ duration: 2, delay: 0.5 }}
+      />
+    </svg>
+  );
 }
 
 export function Tokenomics() {
-  // Build cumulative angles for donut
-  let cumulative = 0;
-  const slices = allocations.map((a) => {
-    const start = cumulative;
-    cumulative += a.percent * 3.6; // 360 * percent / 100
-    return { ...a, startAngle: start, endAngle: cumulative };
-  });
-
+  const reduce = useReducedMotion();
+  
   return (
-    <section className="relative py-24 md:py-32 px-5" aria-labelledby="tokenomics-heading">
-      <div className="max-w-7xl mx-auto">
+    <section className="relative py-24 md:py-32 px-5 overflow-hidden" aria-labelledby="tokenomics-heading">
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: `linear-gradient(var(--color-accent) 1px, transparent 1px), linear-gradient(90deg, var(--color-accent) 1px, transparent 1px)`,
+        backgroundSize: "60px 60px",
+      }} />
+      
+      <div className="max-w-7xl mx-auto relative">
+        {/* Header - Left aligned, not centered */}
         <motion.div
-          className="text-center max-w-3xl mx-auto mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          className="mb-16 max-w-2xl"
+          initial={reduce ? false : { opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
         >
-          <h2 id="tokenomics-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
-            <span className="text-gradient">$IGNITE</span> Tokenomics
+          <div className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-accent)] mb-4">
+            Tokenomics
+          </div>
+          <h2 id="tokenomics-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
+            <span className="text-gradient">$IGNITE</span> Allocation
           </h2>
           <p className="text-lg text-[var(--color-text-muted)] leading-relaxed">
             Designed for long-term alignment. No team tokens at launch. Community owns the majority.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Donut Chart */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-20">
+          {/* 3D Isometric Blocks - Takes 3 columns */}
           <motion.div
-            initial={{ opacity: 0, x: -40 }}
-            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-3 relative"
+            initial={reduce ? false : { opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
           >
-            <Card variant="premium" padding="lg" className="h-full">
-              <h3 className="text-xl font-semibold mb-8 text-center">Allocation Breakdown</h3>
-              <div className="flex flex-col items-center gap-6">
-                <div className="relative w-64 h-64">
-                  <svg viewBox="0 0 200 200" className="w-full h-full">
-                    {slices.map((slice, i) => (
-                      <motion.path
-                        key={slice.label}
-                        d={describeArc(100, 100, 80, slice.startAngle, slice.endAngle - 0.5)}
-                        fill={slice.color}
-                        stroke="var(--color-bg)"
-                        strokeWidth="2"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.4, delay: i * 0.08 }}
-                        style={{ cursor: "pointer" }}
-                      />
-                    ))}
-                    {/* Center hole for donut */}
-                    <circle cx="100" cy="100" r="50" fill="var(--color-bg)" />
-                    <text x="100" y="95" textAnchor="middle" style={{ fill: "var(--color-text)", fontSize: "18px", fontWeight: 700 }}>
-                      $IGNITE
-                    </text>
-                    <text x="100" y="115" textAnchor="middle" style={{ fill: "var(--color-text-muted)", fontSize: "11px" }}>
-                      100M Supply
-                    </text>
-                  </svg>
-                </div>
-
-                {/* Legend under chart */}
-                <div className="flex flex-wrap justify-center gap-3">
-                  {allocations.map((a) => (
-                    <div key={a.label} className="flex items-center gap-1.5 text-xs">
-                      <div className="w-2.5 h-2.5 rounded-sm" style={{ background: a.color }} />
-                      <span className="text-[var(--color-text-muted)]">{a.label}</span>
-                    </div>
-                  ))}
-                </div>
+            <div className="relative h-[400px] md:h-[450px]">
+              <AllocationPath />
+              
+              {allocations.map((alloc, i) => (
+                <IsometricBlock
+                  key={alloc.label}
+                  allocation={alloc}
+                  index={i}
+                  total={allocations.length}
+                />
+              ))}
+              
+              {/* Center label */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10">
+                <div className="text-3xl font-bold text-gradient">$IGNITE</div>
+                <div className="text-sm text-[var(--color-text-muted)]">100M Supply</div>
               </div>
-            </Card>
+            </div>
           </motion.div>
 
-          {/* Distribution bars */}
+          {/* Distribution bars - Takes 2 columns */}
           <motion.div
-            initial={{ opacity: 0, x: 40 }}
+            className="lg:col-span-2"
+            initial={reduce ? false : { opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <Card variant="premium" padding="lg" className="h-full">
-              <h3 className="text-xl font-semibold mb-6">Distribution</h3>
-              <div className="space-y-4">
-                {allocations.map((alloc, index) => (
-                  <motion.div
-                    key={alloc.label}
-                    className="flex items-center gap-4 p-3 rounded-xl"
-                    style={{ background: alloc.color + "10", border: `1px solid ${alloc.color}30` }}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.06 }}
-                  >
+            <div className="space-y-3">
+              {allocations.map((alloc, index) => (
+                <motion.div
+                  key={alloc.label}
+                  className="group relative p-3 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-border-hover)] transition-all duration-200"
+                  initial={reduce ? false : { opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.06 + 0.3 }}
+                >
+                  <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ background: `linear-gradient(135deg, ${alloc.color}, ${alloc.color}cc)` }}
+                      className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ background: `${alloc.color}20` }}
                     >
-                      <alloc.icon size={20} style={{ color: "#0a0a0f" }} />
+                      <alloc.icon size={16} style={{ color: alloc.color }} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
                         <span className="font-medium text-sm truncate">{alloc.label}</span>
-                        <span className="font-bold font-mono text-sm" style={{ color: alloc.color }}>
+                        <span className="font-bold font-mono text-sm ml-2" style={{ color: alloc.color }}>
                           {alloc.percent}%
                         </span>
                       </div>
-                      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--color-border)" }}>
+                      <div className="h-1 rounded-full overflow-hidden" style={{ background: "var(--color-border)" }}>
                         <motion.div
                           className="h-full rounded-full"
-                          style={{ background: alloc.color }}
+                          style={{ background: `linear-gradient(90deg, ${alloc.color}, ${alloc.color}aa)` }}
                           initial={{ width: 0 }}
                           animate={{ width: `${alloc.percent * 4}%` }}
-                          transition={{ duration: 0.8, delay: index * 0.08 + 0.3 }}
+                          transition={{ duration: 1, delay: index * 0.08 + 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
                         />
                       </div>
-                      <p className="text-xs text-[var(--color-text-muted)] mt-1">{alloc.desc}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        {alloc.desc}
+                      </p>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
-            </Card>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         </div>
 
-        {/* Utilities */}
+        {/* Utilities - Bento grid, not 3 identical cards */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduce ? false : { opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <h3 className="text-2xl font-bold mb-8 text-center">Token Utility</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="text-xs font-mono uppercase tracking-[0.2em] text-[var(--color-accent)] mb-4">
+            Utility
+          </div>
+          <h3 className="text-2xl font-bold mb-8">Token Use Cases</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {utilities.map((util, index) => (
-              <motion.div key={util.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
-                <Card variant="accent" padding="lg" className="h-full">
+              <motion.div
+                key={util.title}
+                className="group relative p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-card)] hover:border-[var(--color-accent)] transition-all duration-300"
+                initial={reduce ? false : { opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.08 + 0.6 }}
+              >
+                {/* Accent line on hover */}
+                <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-[var(--color-accent)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                
+                <div className="flex items-start gap-4">
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"
-                    style={{ background: "linear-gradient(135deg, var(--color-accent), var(--color-accent-strong))", color: "#0a0a0f" }}
+                    className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                    style={{ background: "var(--color-accent-glow)" }}
                   >
-                    <util.icon size={28} />
+                    <util.icon size={20} style={{ color: "var(--color-accent)" }} />
                   </div>
-                  <h4 className="text-lg font-semibold mb-2">{util.title}</h4>
-                  <p className="text-[var(--color-text-muted)] leading-relaxed text-sm">{util.desc}</p>
-                </Card>
+                  <div>
+                    <h4 className="font-semibold mb-1">{util.title}</h4>
+                    <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{util.desc}</p>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
