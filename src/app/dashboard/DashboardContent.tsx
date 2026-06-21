@@ -39,7 +39,7 @@ const TIERS: Tier[] = [
     color: "#FBBF24",
     minStake: 100,
     allocation: 0.5,
-    icon: "🌱",
+    icon: "seed",
     perks: ["Early access", "1x allocation", "Basic analytics"],
   },
   {
@@ -48,7 +48,7 @@ const TIERS: Tier[] = [
     color: "#F59E0B",
     minStake: 1000,
     allocation: 2.0,
-    icon: "🌿",
+    icon: "growth",
     perks: ["Priority access", "2x allocation", "Advanced analytics", "Priority support"],
   },
   {
@@ -57,7 +57,7 @@ const TIERS: Tier[] = [
     color: "#D97706",
     minStake: 5000,
     allocation: 5.0,
-    icon: "🌳",
+    icon: "scale",
     perks: ["Guaranteed allocation", "5x allocation", "Real-time data", "Dedicated manager", "Co-investment"],
   },
   {
@@ -66,7 +66,7 @@ const TIERS: Tier[] = [
     color: "#B45309",
     minStake: 25000,
     allocation: 15.0,
-    icon: "⛰️",
+    icon: "summit",
     perks: ["VIP access", "15x allocation", "Custom vesting", "Board seat", "Token airdrops", "Exclusive events"],
   },
 ];
