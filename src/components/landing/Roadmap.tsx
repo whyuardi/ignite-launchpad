@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Card } from "@/components/ui/Card";
-import { Check, Clock, Flag, Rocket, Gem, Shield } from "@phosphor-icons/react";
+import { Check, Clock, Flag, Rocket, Diamond, Shield } from "@phosphor-icons/react";
 
 const phases = [
   {
@@ -52,7 +52,7 @@ const phases = [
     title: "Ecosystem",
     period: "Q4 2025",
     status: "planned",
-    icon: Gem,
+    icon: Diamond,
     items: [
       "IGNITE token utility launch",
       "DAO governance activation",
@@ -105,8 +105,7 @@ export function Roadmap() {
         <motion.div
           className="text-center max-w-3xl mx-auto mb-16"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <h2 id="roadmap-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
             Our <span className="text-gradient">Path Forward</span>
@@ -128,7 +127,7 @@ export function Roadmap() {
 
           <div className="space-y-12 md:space-y-16">
             {phases.map((phase, index) => {
-              const styles = statusStyles[phase.status];
+              const styles = statusStyles[phase.status as keyof typeof statusStyles];
               const isEven = index % 2 === 0;
 
               return (
@@ -136,8 +135,7 @@ export function Roadmap() {
                   key={phase.phase}
                   className={`flex ${isEven ? "md:flex-row" : "md:flex-row-reverse"} items-start gap-8`}
                   initial={{ opacity: 0, x: isEven ? -40 : 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.6, delay: index * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
                   {/* Timeline dot + phase info */}
@@ -211,7 +209,7 @@ export function Roadmap() {
                               ) : phase.status === "current" ? (
                                 <Clock size={16} />
                               ) : (
-                                <Gem size={16} />
+                                <Diamond size={16} />
                               )}
                             </span>
                             <span className="text-sm leading-relaxed">{item}</span>

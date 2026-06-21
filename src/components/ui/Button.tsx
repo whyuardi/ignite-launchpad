@@ -3,7 +3,11 @@
 import { forwardRef, ButtonHTMLAttributes } from "react";
 import { motion } from "motion/react";
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+// Exclude all event handlers that conflict with motion
+type SafeButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 
+  'onDrag' | 'onDragStart' | 'onDragEnd' | 'onAnimationStart' | 'onAnimationEnd' | 'onAnimationIteration'>;
+
+interface ButtonProps extends SafeButtonProps {
   variant?: "primary" | "secondary" | "ghost";
   size?: "sm" | "md" | "lg";
   loading?: boolean;

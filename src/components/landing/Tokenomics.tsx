@@ -2,14 +2,14 @@
 
 import { motion } from "motion/react";
 import { Card } from "@/components/ui/Card";
-import { PieChart, Users, Building, Gift, Lock, Wallet, TrendingUp } from "@phosphor-icons/react";
+import { ChartPie, Users, Building, Gift, Lock, Wallet, ChartLineUp } from "@phosphor-icons/react";
 
 const allocations = [
   { label: "Public Sale", percent: 25, color: "#f0c040", icon: Users, desc: "Fair launch, no VC pre-sale" },
   { label: "Ecosystem Fund", percent: 20, color: "#627eea", icon: Gift, desc: "Grants, liquidity, incentives" },
   { label: "Team & Advisors", percent: 15, color: "#8247e5", icon: Building, desc: "36-month vesting, 12-month cliff" },
   { label: "Treasury", percent: 15, color: "#22c55e", icon: Wallet, desc: "Operations, legal, insurance" },
-  { label: "Liquidity & MM", percent: 10, color: "#f04444", icon: TrendingUp, desc: "CEX/DEX liquidity, market making" },
+  { label: "Liquidity & MM", percent: 10, color: "#f04444", icon: ChartLineUp, desc: "CEX/DEX liquidity, market making" },
   { label: "Staking Rewards", percent: 10, color: "#eab308", icon: Lock, desc: "Dynamic APY, auto-compound" },
   { label: "Strategic Reserve", percent: 5, color: "#28a0f0", icon: Building, desc: "Future partnerships, acquisitions" },
 ];
@@ -21,7 +21,7 @@ const utilities = [
     desc: "Stake IGNITE for guaranteed allocation in all sales. Tiered by amount and duration.",
   },
   {
-    icon: TrendingUp,
+    icon: ChartLineUp,
     title: "Fee Discounts",
     desc: "Up to 50% off platform fees. Proportional to stake weight and lock duration.",
   },
@@ -54,8 +54,7 @@ export function Tokenomics() {
         <motion.div
           className="text-center max-w-3xl mx-auto mb-16"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <h2 id="tokenomics-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
             <span className="text-gradient">$IGNITE</span> Tokenomics
@@ -70,10 +69,9 @@ export function Tokenomics() {
           <motion.div
             className="relative"
             initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, x: 0 }}
           >
-            <Card variant="premium" padding="xl" className="h-full">
+            <Card variant="premium" padding="lg" className="h-full">
               <h3 className="text-xl font-semibold mb-8 text-center">Allocation Breakdown</h3>
               <div className="flex flex-col items-center gap-6">
                 <div className="relative w-64 h-64">
@@ -129,8 +127,7 @@ export function Tokenomics() {
           {/* Legend */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            animate={{ opacity: 1, x: 0 }}
           >
             <Card variant="premium" padding="lg" className="h-full">
               <h3 className="text-xl font-semibold mb-6">Distribution</h3>
@@ -177,13 +174,12 @@ export function Tokenomics() {
         {/* Utilities */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <h3 className="text-2xl font-bold mb-8 text-center">Token Utility</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {utilities.map((util, index) => (
-              <motion.div key={util.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.08 }}>
+              <motion.div key={util.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
                 <Card variant="accent" padding="lg" hover className="h-full">
                   <div
                     className="w-12 h-12 rounded-xl flex items-center justify-center mb-4"

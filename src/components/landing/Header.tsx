@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
-import { Menu, X, Sparkle } from "@phosphor-icons/react";
+import { ListDashes, X, Sparkle } from "@phosphor-icons/react";
 import { useState } from "react";
 
 const navLinks = [
@@ -46,12 +46,12 @@ export function Header() {
           <Link href="#faq" className="text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors">
             Documentation
           </Link>
-          <Button size="sm" asChild>
-            <Link href="/dashboard">Launch App</Link>
-          </Button>
+          <Link href="/dashboard" className="btn-primary inline-flex items-center justify-center px-3 py-1.5 text-xs font-medium rounded-[var(--radius-md)]">
+            Launch App
+          </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile ListDashes Button */}
         <button
           className="md:hidden p-2 rounded-lg text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)] transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -59,19 +59,18 @@ export function Header() {
           aria-controls="mobile-menu"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {isMenuOpen ? <X size={24} /> : <ListDashes size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile ListDashes */}
       <motion.div
         id="mobile-menu"
         className="md:hidden px-5 pb-6 border-t"
-        style={{ borderColor: "var(--color-border)" }}
+        style={{ borderColor: "var(--color-border)", overflow: "hidden" }}
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: isMenuOpen ? 1 : 0, height: isMenuOpen ? "auto" : 0 }}
         transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-        style={{ overflow: "hidden" }}
       >
         <nav className="flex flex-col gap-2 pt-4" aria-label="Mobile navigation">
           {navLinks.map((link) => (
@@ -88,9 +87,9 @@ export function Header() {
             <Link href="#faq" className="py-2 text-base font-medium text-center text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors">
               Documentation
             </Link>
-            <Button size="md" className="w-full" asChild>
-              <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>Launch App</Link>
-            </Button>
+            <Link href="/dashboard" onClick={() => setIsMenuOpen(false)} className="btn-primary w-full inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-[var(--radius-md)]">
+              Launch App
+            </Link>
           </div>
         </nav>
       </motion.div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Twitter, Github, Discord, Telegram, Linkedin, Mail, ArrowRight } from "@phosphor-icons/react";
+import { TwitterLogo, GithubLogo, DiscordLogo, TelegramLogo, LinkedinLogo, Envelope, ArrowRight } from "@phosphor-icons/react";
 
 const footerLinks = {
   Product: [
@@ -34,12 +34,12 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Twitter, href: "https://twitter.com/ignite_launchpad", label: "Twitter" },
-  { icon: Github, href: "https://github.com/ignite-launchpad", label: "GitHub" },
-  { icon: Discord, href: "https://discord.gg/ignite", label: "Discord" },
-  { icon: Telegram, href: "https://t.me/ignite_launchpad", label: "Telegram" },
-  { icon: Linkedin, href: "https://linkedin.com/company/ignite-launchpad", label: "LinkedIn" },
-  { icon: Mail, href: "mailto:hello@ignite-launchpad.com", label: "Email" },
+  { icon: TwitterLogo, href: "https://twitter.com/ignite_launchpad", label: "Twitter", external: true },
+  { icon: GithubLogo, href: "https://github.com/ignite-launchpad", label: "GitHub", external: true },
+  { icon: DiscordLogo, href: "https://discord.gg/ignite", label: "Discord", external: true },
+  { icon: TelegramLogo, href: "https://t.me/ignite_launchpad", label: "Telegram", external: true },
+  { icon: LinkedinLogo, href: "https://linkedin.com/company/ignite-launchpad", label: "LinkedIn", external: true },
+  { icon: Envelope, href: "mailto:hello@ignite-launchpad.com", label: "Email", external: true },
 ];
 
 export function Footer() {

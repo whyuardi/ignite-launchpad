@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { Card } from "@/components/ui/Card";
-import { Globe, Shield, Zap, Users, Lock, BarChart, Target, ArrowRight } from "@phosphor-icons/react";
+import { Globe, Shield, Lightning, Users, Lock, ChartBar, Target, ArrowRight } from "@phosphor-icons/react";
 
 const features = [
   {
@@ -18,7 +18,7 @@ const features = [
     metric: "Audited",
   },
   {
-    icon: Zap,
+    icon: Lightning,
     title: "Automated Liquidity",
     desc: "Uniswap V3 concentrated liquidity positions auto-created at launch. Dynamic fee tiers. LP tokens locked in timelock. Impermanent loss protection.",
     metric: "Instant LP",
@@ -36,7 +36,7 @@ const features = [
     metric: "Flexible",
   },
   {
-    icon: BarChart,
+    icon: ChartBar,
     title: "Real-Time Analytics",
     desc: "Live raise progress, participant demographics, chain distribution, and geographic heatmaps. Export data via API. Webhook notifications for milestones.",
     metric: "Live Data",
@@ -62,8 +62,7 @@ export function Features() {
         <motion.div
           className="text-center max-w-3xl mx-auto mb-16"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <h2 id="features-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
             Built for <span className="text-gradient">Founders Who Ship</span>
@@ -78,8 +77,7 @@ export function Features() {
             <motion.div
               key={feature.title}
               initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <Card variant="accent" padding="lg" hover className="h-full flex flex-col">

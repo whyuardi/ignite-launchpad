@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { ChevronDown, ChevronUp, Globe } from "@phosphor-icons/react";
+import { CaretDown, CaretUp, Globe } from "@phosphor-icons/react";
 
 export interface Chain {
   id: string;
@@ -165,7 +165,7 @@ export function ChainSelector({
           )}
           <span className="capitalize">{selectedChain.name}</span>
         </span>
-        {isOpen ? <ChevronUp weight="bold" size={16} /> : <ChevronDown weight="bold" size={16} />}
+        {isOpen ? <CaretUp weight="bold" size={16} /> : <CaretDown weight="bold" size={16} />}
       </button>
 
       <AnimatePresence>

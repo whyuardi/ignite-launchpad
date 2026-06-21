@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ArrowRight, Globe, Shield, Zap, Users, Check } from "@phosphor-icons/react";
+import { ArrowRight, Globe, Shield, Lightning, Users, Check } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/Button";
 import { ThreeBackground } from "@/components/three/ThreeBackground";
 
@@ -17,7 +17,7 @@ const features = [
     desc: "Smart contracts audited by top firms. ReentrancyGuard, Pausable, and timelock controls built-in.",
   },
   {
-    icon: Zap,
+    icon: Lightning,
     title: "Instant Liquidity",
     desc: "Automated liquidity bootstrapping via Uniswap V3 concentrated positions. LP locked from day one.",
   },

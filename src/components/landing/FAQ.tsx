@@ -49,8 +49,7 @@ export function FAQ() {
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <h2 id="faq-heading" className="text-4xl md:text-5xl font-bold tracking-tight mb-6">
             <span className="text-gradient">Questions?</span> We've Got Answers
@@ -65,8 +64,7 @@ export function FAQ() {
             <motion.div
               key={faq.q}
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.06 }}
             >
               <Card
@@ -106,11 +104,10 @@ export function FAQ() {
                 <motion.div
                   id={`faq-answer-${index}`}
                   className="mt-4 pt-4 border-t"
-                  style={{ borderColor: "var(--color-border)" }}
+                  style={{ borderColor: "var(--color-border)", overflow: "hidden" }}
                   initial={false}
                   animate={{ height: openIndex === index ? "auto" : 0, opacity: openIndex === index ? 1 : 0, paddingTop: openIndex === index ? "1rem" : 0 }}
                   transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                  style={{ overflow: "hidden" }}
                 >
                   <p className="text-[var(--color-text-muted)] leading-relaxed">{faq.a}</p>
                 </motion.div>
@@ -123,8 +120,7 @@ export function FAQ() {
         <motion.div
           className="mt-16 text-center"
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
         >
           <p className="text-[var(--color-text-muted)] mb-4">Still have questions?</p>
           <a
