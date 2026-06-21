@@ -96,7 +96,7 @@ export function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
           >
-            <Button size="lg" rightIcon={<ArrowRight size={20} />} className="min-w-[200px]">
+            <Button size="lg" rightIcon={<ArrowRight size={20} />} className="min-w-[200px]" onClick={() => window.location.href = "/dashboard"}>
               Join Active Sale
             </Button>
             <Button variant="secondary" size="lg" leftIcon={<Globe size={20} />}>
