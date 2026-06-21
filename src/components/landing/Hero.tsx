@@ -99,7 +99,7 @@ export function Hero() {
             <Button size="lg" rightIcon={<ArrowRight size={20} />} className="min-w-[200px]" onClick={() => window.location.href = "/dashboard"}>
               Join Active Sale
             </Button>
-            <Button variant="secondary" size="lg" leftIcon={<Globe size={20} />}>
+            <Button variant="secondary" size="lg" leftIcon={<Globe size={20} />} onClick={() => window.location.href = "/dashboard"}>
               View All Projects
             </Button>
           </motion.div>
