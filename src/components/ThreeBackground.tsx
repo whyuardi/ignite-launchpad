@@ -1,164 +1,276 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function ThreeBackground() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    let mounted = true;
+    let animationId: number;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const init = async () => {
+      const THREE = await import("three");
+      if (!mounted || !containerRef.current) return;
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    
-    const resize = () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    };
-    
-    resize();
-    window.addEventListener("resize", resize);
+      const container = containerRef.current;
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 5;
 
-    // Particles
-    const particles: Array<{
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      size: number;
-      opacity: number;
-      hue: number;
-    }> = [];
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setClearColor(0x000000, 0);
+      container.appendChild(renderer.domElement);
 
-    for (let i = 0; i < 60; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        size: Math.random() * 2 + 0.5,
-        opacity: Math.random() * 0.5 + 0.1,
-        hue: Math.random() * 40 + 20, // amber range
+      // Ambient light
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+      scene.add(ambientLight);
+
+      // Point lights
+      const pointLight1 = new THREE.PointLight(0xffb800, 2, 15);
+      pointLight1.position.set(3, 2, 3);
+      scene.add(pointLight1);
+
+      const pointLight2 = new THREE.PointLight(0xff6b00, 1.5, 12);
+      pointLight2.position.set(-3, -1, 2);
+      scene.add(pointLight2);
+
+      const pointLight3 = new THREE.PointLight(0x00c896, 0.8, 10);
+      pointLight3.position.set(0, 3, -2);
+      scene.add(pointLight3);
+
+      // === Central icosahedron wireframe ===
+      const icoGeometry = new THREE.IcosahedronGeometry(1.2, 1);
+      const icoWireframe = new THREE.WireframeGeometry(icoGeometry);
+      const icoLine = new THREE.LineSegments(
+        icoWireframe,
+        new THREE.LineBasicMaterial({ color: 0xffb800, opacity: 0.35, transparent: true })
+      );
+      scene.add(icoLine);
+
+      // Solid inner icosahedron
+      const icoSolid = new THREE.Mesh(
+        new THREE.IcosahedronGeometry(0.9, 0),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xffb800,
+          metalness: 0.8,
+          roughness: 0.2,
+          transparent: true,
+          opacity: 0.15,
+          wireframe: false,
+        })
+      );
+      scene.add(icoSolid);
+
+      // === Orbiting torus rings ===
+      const torusGroup = new THREE.Group();
+      scene.add(torusGroup);
+
+      const torus1 = new THREE.Mesh(
+        new THREE.TorusGeometry(2.0, 0.02, 8, 64),
+        new THREE.MeshBasicMaterial({ color: 0xffb800, opacity: 0.25, transparent: true })
+      );
+      torus1.rotation.x = Math.PI / 2.5;
+      torusGroup.add(torus1);
+
+      const torus2 = new THREE.Mesh(
+        new THREE.TorusGeometry(2.3, 0.015, 8, 64),
+        new THREE.MeshBasicMaterial({ color: 0xff6b00, opacity: 0.15, transparent: true })
+      );
+      torus2.rotation.x = Math.PI / 3;
+      torus2.rotation.y = Math.PI / 4;
+      torusGroup.add(torus2);
+
+      const torus3 = new THREE.Mesh(
+        new THREE.TorusGeometry(2.6, 0.01, 8, 64),
+        new THREE.MeshBasicMaterial({ color: 0x00c896, opacity: 0.1, transparent: true })
+      );
+      torus3.rotation.x = Math.PI / 4;
+      torus3.rotation.y = -Math.PI / 3;
+      torusGroup.add(torus3);
+
+      // === Small orbiting spheres (nodes on rings) ===
+      const nodePositions = [
+        { angle: 0, radius: 2.0, color: 0xffb800, size: 0.06, ring: 0 },
+        { angle: Math.PI * 0.6, radius: 2.0, color: 0xffb800, size: 0.05, ring: 0 },
+        { angle: Math.PI * 1.2, radius: 2.0, color: 0xffb800, size: 0.04, ring: 0 },
+        { angle: 0.5, radius: 2.3, color: 0xff6b00, size: 0.05, ring: 1 },
+        { angle: Math.PI * 1.1, radius: 2.3, color: 0xff6b00, size: 0.04, ring: 1 },
+        { angle: 0.8, radius: 2.6, color: 0x00c896, size: 0.04, ring: 2 },
+        { angle: Math.PI * 1.5, radius: 2.6, color: 0x00c896, size: 0.03, ring: 2 },
+      ];
+
+      const nodeMeshes = nodePositions.map((n) => {
+        const mesh = new THREE.Mesh(
+          new THREE.SphereGeometry(n.size, 16, 16),
+          new THREE.MeshBasicMaterial({ color: n.color })
+        );
+        scene.add(mesh);
+        return { mesh, ...n };
       });
-    }
 
-    // Grid lines
-    const gridSize = 80;
+      // === Particle field ===
+      const particleCount = 120;
+      const particleGeo = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
 
-    const animate = () => {
-      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = (Math.random() - 0.5) * 16;
+        positions[i * 3 + 1] = (Math.random() - 0.5) * 16;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
 
-      // Draw grid
-      ctx.strokeStyle = "rgba(255, 184, 0, 0.03)";
-      ctx.lineWidth = 0.5;
-      
-      for (let x = 0; x < width; x += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(x, 0);
-        ctx.lineTo(x, height);
-        ctx.stroke();
-      }
-      
-      for (let y = 0; y < height; y += gridSize) {
-        ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(width, y);
-        ctx.stroke();
+        const color = new THREE.Color().setHSL(0.1 + Math.random() * 0.08, 1, 0.5 + Math.random() * 0.3);
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
       }
 
-      // Draw and update particles
-      for (const p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
+      particleGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      particleGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
-        // Wrap around
-        if (p.x < 0) p.x = width;
-        if (p.x > width) p.x = 0;
-        if (p.y < 0) p.y = height;
-        if (p.y > height) p.y = 0;
+      const particleMat = new THREE.PointsMaterial({
+        size: 0.03,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.6,
+        sizeAttenuation: true,
+      });
 
-        // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 100%, 50%, ${p.opacity})`;
-        ctx.fill();
+      const particles = new THREE.Points(particleGeo, particleMat);
+      scene.add(particles);
 
-        // Draw glow
-        const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 8);
-        gradient.addColorStop(0, `hsla(${p.hue}, 100%, 50%, ${p.opacity * 0.3})`);
-        gradient.addColorStop(1, "transparent");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(p.x - p.size * 8, p.y - p.size * 8, p.size * 16, p.size * 16);
-      }
+      // === Connection lines between particles (subtle) ===
+      const lineGeo = new THREE.BufferGeometry();
+      const linePositions = new Float32Array(60 * 6); // 60 lines max
+      lineGeo.setAttribute("position", new THREE.BufferAttribute(linePositions, 3));
+      const lineMat = new THREE.LineBasicMaterial({ color: 0xffb800, opacity: 0.06, transparent: true });
+      const connectionLines = new THREE.LineSegments(lineGeo, lineMat);
+      scene.add(connectionLines);
 
-      // Draw connections between nearby particles
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
+      // === Mouse interaction ===
+      const mouse = { x: 0, y: 0 };
+      const onMouseMove = (e: MouseEvent) => {
+        mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      };
+      window.addEventListener("mousemove", onMouseMove);
 
-          if (dist < 150) {
-            const opacity = (1 - dist / 150) * 0.15;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(255, 184, 0, ${opacity})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+      // === Resize ===
+      const onResize = () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      };
+      window.addEventListener("resize", onResize);
+
+      // === Animation loop ===
+      const clock = new THREE.Clock();
+
+      const animate = () => {
+        const t = clock.getElapsedTime();
+
+        // Rotate icosahedron
+        icoLine.rotation.y = t * 0.15;
+        icoLine.rotation.x = t * 0.08;
+        icoSolid.rotation.y = t * 0.15;
+        icoSolid.rotation.x = t * 0.08;
+
+        // Breathe effect on icosahedron
+        const breathe = 1 + Math.sin(t * 0.5) * 0.05;
+        icoLine.scale.setScalar(breathe);
+        icoSolid.scale.setScalar(breathe);
+
+        // Rotate torus rings
+        torusGroup.rotation.z = t * 0.05;
+        torus1.rotation.z = t * 0.1;
+        torus2.rotation.z = -t * 0.08;
+        torus3.rotation.z = t * 0.06;
+
+        // Move orbiting nodes
+        nodeMeshes.forEach((n) => {
+          const speed = 0.3 + n.ring * 0.1;
+          const angle = n.angle + t * speed;
+          const tilt = [Math.PI / 2.5, Math.PI / 3, Math.PI / 4][n.ring];
+          n.mesh.position.x = Math.cos(angle) * n.radius * Math.cos(tilt);
+          n.mesh.position.y = Math.sin(angle) * n.radius;
+          n.mesh.position.z = Math.cos(angle) * n.radius * Math.sin(tilt);
+        });
+
+        // Update particle connections
+        const posArray = particleGeo.attributes.position.array as Float32Array;
+        let lineIdx = 0;
+        const lineArray = lineGeo.attributes.position.array as Float32Array;
+
+        for (let i = 0; i < Math.min(particleCount, 40); i++) {
+          for (let j = i + 1; j < Math.min(particleCount, 40); j++) {
+            const dx = posArray[i * 3] - posArray[j * 3];
+            const dy = posArray[i * 3 + 1] - posArray[j * 3 + 1];
+            const dz = posArray[i * 3 + 2] - posArray[j * 3 + 2];
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+            if (dist < 2.5 && lineIdx < 60) {
+              lineArray[lineIdx * 6] = posArray[i * 3];
+              lineArray[lineIdx * 6 + 1] = posArray[i * 3 + 1];
+              lineArray[lineIdx * 6 + 2] = posArray[i * 3 + 2];
+              lineArray[lineIdx * 6 + 3] = posArray[j * 3];
+              lineArray[lineIdx * 6 + 4] = posArray[j * 3 + 1];
+              lineArray[lineIdx * 6 + 5] = posArray[j * 3 + 2];
+              lineIdx++;
+            }
           }
         }
-      }
+        // Clear remaining lines
+        for (let i = lineIdx * 6; i < 60 * 6; i++) lineArray[i] = 0;
+        lineGeo.attributes.position.needsUpdate = true;
 
-      // Central glow
-      const centerX = width / 2;
-      const centerY = height / 3;
-      const glowGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 300);
-      glowGradient.addColorStop(0, "rgba(255, 184, 0, 0.05)");
-      glowGradient.addColorStop(0.5, "rgba(255, 107, 0, 0.02)");
-      glowGradient.addColorStop(1, "transparent");
-      ctx.fillStyle = glowGradient;
-      ctx.fillRect(0, 0, width, height);
+        // Subtle particle drift
+        particles.rotation.y = t * 0.02;
+        particles.rotation.x = t * 0.01;
 
-      animationRef.current = requestAnimationFrame(animate);
+        // Camera follows mouse slightly
+        camera.position.x += (mouse.x * 0.5 - camera.position.x) * 0.02;
+        camera.position.y += (mouse.y * 0.3 - camera.position.y) * 0.02;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+        animationId = requestAnimationFrame(animate);
+      };
+
+      setLoaded(true);
+      animate();
     };
 
-    animate();
+    init();
 
     return () => {
-      window.removeEventListener("resize", resize);
-      cancelAnimationFrame(animationRef.current);
+      mounted = false;
+      cancelAnimationFrame(animationId);
+      if (containerRef.current) {
+        const canvas = containerRef.current.querySelector("canvas");
+        if (canvas) containerRef.current.removeChild(canvas);
+      }
     };
   }, []);
 
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-        style={{ background: "transparent" }}
-      />
-      {/* Noise texture overlay */}
-      <div 
-        className="absolute inset-0 opacity-[0.02]"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-        }}
-      />
-      {/* Vignette */}
-      <div 
-        className="absolute inset-0"
-        style={{
-          background: "radial-gradient(ellipse at center, transparent 0%, var(--color-bg) 80%)",
-        }}
-      />
+    <div className="fixed inset-0 z-0 pointer-events-none" ref={containerRef}>
+      {/* CSS fallback while Three.js loads */}
+      {!loaded && (
+        <div className="absolute inset-0 overflow-hidden">
+          <div
+            className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full opacity-10 blur-[120px] animate-pulse"
+            style={{ background: "var(--color-accent)" }}
+          />
+          <div
+            className="absolute bottom-1/3 right-1/4 w-[300px] h-[300px] rounded-full opacity-5 blur-[100px]"
+            style={{ background: "var(--color-chain-eth)" }}
+          />
+        </div>
+      )}
     </div>
   );
 }

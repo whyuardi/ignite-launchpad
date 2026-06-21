@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Sparkle, Wallet, ArrowUpRight, ArrowDown, Check, Clock, LinkSimple } from "@phosphor-icons/react";
+import { Sparkle, Wallet, ArrowUpRight, ArrowDown, Check, Clock, LinkSimple, Plant, TreeEvergreen, Mountains, Leaf } from "@phosphor-icons/react";
 
 // ═══════════════════════════════════════════════════════════════════
 // Types
@@ -208,8 +208,13 @@ function TierSelector({
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-lg">{tier.icon}</span>
-              <span className="font-semibold text-sm">{tier.name}</span>
+              <span className="text-[var(--color-accent)]">
+                        {tier.icon === "seed" && <Leaf size={18} />}
+                        {tier.icon === "growth" && <Plant size={18} />}
+                        {tier.icon === "scale" && <TreeEvergreen size={18} />}
+                        {tier.icon === "summit" && <Mountains size={18} />}
+                      </span>
+                      <span className="font-semibold text-sm">{tier.name}</span>
             </div>
             <div className={`${VALUE} text-xl`} style={{ color: tier.color }}>
               {tier.allocation}%
@@ -465,7 +470,12 @@ export default function DashboardContent() {
               <div className="space-y-3">
                 {TIERS.map((tier) => (
                   <div key={tier.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-bg)] transition-colors">
-                    <span className="text-lg">{tier.icon}</span>
+                    <span className="text-[var(--color-accent)]">
+                        {tier.icon === "seed" && <Leaf size={18} />}
+                        {tier.icon === "growth" && <Plant size={18} />}
+                        {tier.icon === "scale" && <TreeEvergreen size={18} />}
+                        {tier.icon === "summit" && <Mountains size={18} />}
+                      </span>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-medium">{tier.name}</div>
                       <div className="text-xs text-[var(--color-text-muted)]">{tier.minStake.toLocaleString()} IGNITE</div>
